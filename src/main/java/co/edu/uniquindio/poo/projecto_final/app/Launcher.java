@@ -1,6 +1,5 @@
-package co.edu.uniquindio.poo.projecto_final;
+package co.edu.uniquindio.poo.projecto_final.app;
 
-import co.edu.uniquindio.poo.projecto_final.app.InmoSmartApp;
 import javafx.application.Application;
 
 public class Launcher {

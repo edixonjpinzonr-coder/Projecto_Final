@@ -1,21 +1,22 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
+import co.edu.uniquindio.poo.projecto_final.services.INotificar;
+import co.edu.uniquindio.poo.projecto_final.services.IOperacion;
+
 import java.util.List;
 
-public class InmoSmart {
+public class InmoSmart implements IOperacion {
     private String nombre;
 
-    private List<IOperaciones> listaOperaciones;
     private List<Usuario> listaUsuarios;
     private List<Inmueble> listaInmuebles;
     private List<Publicacion> listaPublicaciones;
-    private List<Transacion> listaTransacciones;
+    private List<Transaccion> listaTransacciones;
     private List<Alerta> listaAlertas;
-    private List<INotificacar> listaNotificaciones;
+    private List<INotificar> listaNotificaciones;
 
     public InmoSmart(String nombre) {
         this.nombre = nombre;
-        this.listaOperaciones = listaOperaciones;
         this.listaUsuarios = listaUsuarios;
         this.listaInmuebles = listaInmuebles;
         this.listaPublicaciones = listaPublicaciones;
@@ -33,14 +34,6 @@ public class InmoSmart {
         this.nombre = nombre;
     }
 
-    public List<IOperaciones> getListaOperaciones() {
-        return listaOperaciones;
-    }
-
-    public void setListaOperaciones(List<IOperaciones> listaOperaciones) {
-        this.listaOperaciones = listaOperaciones;
-    }
-
     public List<Usuario> getListaUsuarios() {
         return listaUsuarios;
     }
@@ -49,11 +42,11 @@ public class InmoSmart {
         this.listaUsuarios = listaUsuarios;
     }
 
-    public List<inmueble> getListaInmuebles() {
+    public List<Inmueble> getListaInmuebles() {
         return listaInmuebles;
     }
 
-    public void setListaInmuebles(List<inmueble> listaInmuebles) {
+    public void setListaInmuebles(List<Inmueble> listaInmuebles) {
         this.listaInmuebles = listaInmuebles;
     }
 
@@ -65,11 +58,11 @@ public class InmoSmart {
         this.listaPublicaciones = listaPublicaciones;
     }
 
-    public List<Transacion> getListaTransacciones() {
+    public List<Transaccion> getListaTransacciones() {
         return listaTransacciones;
     }
 
-    public void setListaTransacciones(List<Transacion> listaTransacciones) {
+    public void setListaTransacciones(List<Transaccion> listaTransacciones) {
         this.listaTransacciones = listaTransacciones;
     }
 
@@ -81,11 +74,11 @@ public class InmoSmart {
         this.listaAlertas = listaAlertas;
     }
 
-    public List<INotificacar> getListaNotificaciones() {
+    public List<INotificar> getListaNotificaciones() {
         return listaNotificaciones;
     }
 
-    public void setListaNotificaciones(List<INotificacar> listaNotificaciones) {
+    public void setListaNotificaciones(List<INotificar> listaNotificaciones) {
         this.listaNotificaciones = listaNotificaciones;
     }
 
@@ -93,7 +86,6 @@ public class InmoSmart {
     public String toString() {
         return "InmoSmart{" +
                 "nombre='" + nombre + '\'' +
-                ", listaOperaciones=" + listaOperaciones +
                 ", listaUsuarios=" + listaUsuarios +
                 ", listaInmuebles=" + listaInmuebles +
                 ", listaPublicaciones=" + listaPublicaciones +
@@ -104,4 +96,23 @@ public class InmoSmart {
     }
 
 
+    @Override
+    public void buscarinmueble() {
+
+    }
+
+    @Override
+    public void PublicarInmueble() {
+
+    }
+
+    @Override
+    public void realizarOferta() {
+
+    }
+
+    @Override
+    public void generarReporte() {
+
+    }
 }
