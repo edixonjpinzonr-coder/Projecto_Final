@@ -11,15 +11,17 @@ public class Oferta {
     private float valorOferta;
     private LocalDate fechaoferta;
     private EstadoOferta estadoOferta;
+    private InmoSmart ownedByInmoSmart;
 
     public Oferta(String codigo, Comprador comprador, Inmueble inmueble, float valorOferta,
-                  LocalDate fechaoferta, EstadoOferta estadoOferta) {
+                  LocalDate fechaoferta, EstadoOferta estadoOferta,  InmoSmart ownedByInmoSmart) {
         this.codigo = codigo;
         this.comprador = comprador;
         this.inmueble = inmueble;
         this.valorOferta = valorOferta;
         this.fechaoferta = fechaoferta;
         this.estadoOferta = estadoOferta;
+        this.ownedByInmoSmart = ownedByInmoSmart;
     }
 
     public String getCodigo() {
@@ -70,6 +72,14 @@ public class Oferta {
         this.estadoOferta = estadoOferta;
     }
 
+    public InmoSmart getOwnedByInmoSmart() {
+        return ownedByInmoSmart;
+    }
+
+    public void setOwnedByInmoSmart(InmoSmart ownedByInmoSmart) {
+        this.ownedByInmoSmart = ownedByInmoSmart;
+    }
+
     @Override
     public String toString() {
         return "Oferta{" +
@@ -79,7 +89,7 @@ public class Oferta {
                 ", valorOferta=" + valorOferta +
                 ", fechaoferta=" + fechaoferta +
                 ", estadoOferta=" + estadoOferta +
+                ", ownedByInmoSmart=" + ownedByInmoSmart +
                 '}';
     }
-
 }

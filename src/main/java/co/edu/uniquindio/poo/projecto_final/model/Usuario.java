@@ -1,30 +1,25 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
+import co.edu.uniquindio.poo.projecto_final.model.enums.Rango;
+
 public abstract class Usuario {
-    private String id;
     private String nombre;
     private String identificacion;
     private String telefono;
     private String correo;
-    private int puntosReputacion;
+    protected int puntosReputacion;
 
-    public Usuario(String id, String nombre, String identificacion,
+    public Usuario(String nombre, String identificacion,
                    String telefono, String correo) {
-        this.id = id;
+
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.telefono = telefono;
         this.correo = correo;
         this.puntosReputacion = 0;
+
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNombre() {
         return nombre;
@@ -62,10 +57,13 @@ public abstract class Usuario {
         return puntosReputacion;
     }
 
+    public Rango getRango() {
+        return obtenerRango();
+    }
+
     @Override
     public String toString() {
         return "Usuario{" +
-                "id='" + id + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", identificacion='" + identificacion + '\'' +
                 ", telefono='" + telefono + '\'' +
@@ -74,4 +72,15 @@ public abstract class Usuario {
                 '}';
     }
 
+    public abstract void sumarPuntosReputacion(String opcion);
+
+    public abstract double calcularBeneficio();
+
+    public Rango obtenerRango(){
+        if(puntosReputacion>0 && puntosReputacion<=100){return Rango.PRINCIPIANTE;}
+        if(puntosReputacion>100 && puntosReputacion<=500){return Rango.INVERSIONISTA;}
+        if(puntosReputacion>500 && puntosReputacion<=20000){return Rango.EXPERTO_INMOBILIARIO;}
+        if(puntosReputacion>2000){return Rango.MAGNATE_INMOBILIARIO;}
+        return Rango.PRINCIPIANTE;
+    }
 }

@@ -2,6 +2,8 @@ package co.edu.uniquindio.poo.projecto_final.model;
 
 import co.edu.uniquindio.poo.projecto_final.model.enums.Estado;
 
+import java.util.ArrayList;
+
 public abstract class Inmueble {
 
     private String codigo;
@@ -11,6 +13,7 @@ public abstract class Inmueble {
     private float precio;
     private Estado estado;
     private Vendedor vendedor;
+    private ArrayList<Oferta> listaOfertas;
 
     public Inmueble(String codigo, String direccion, String ciudad,
                     String area, float precio, Estado estado, Vendedor vendedor) {
@@ -21,6 +24,7 @@ public abstract class Inmueble {
         this.precio = precio;
         this.estado = estado;
         this.vendedor=vendedor;
+        this.listaOfertas=new ArrayList<>();
     }
 
     public String getCodigo() {
@@ -62,6 +66,10 @@ public abstract class Inmueble {
     public void setEstado(Estado estado) {
         this.estado = estado;
     }
+
+    public Vendedor getVendedor() {return vendedor;}
+
+    public ArrayList<Oferta> getListaOfertas() {return listaOfertas;}
 
     @Override
     public String toString() {
