@@ -12,16 +12,13 @@ public class Transaccion {
     private TipoOperacion tipoOperacion;
     private LocalDate fecha;
 
-    private InmoSmart OwnedByInmoSmart;
-
     public Transaccion(String codigoTransaccion, Oferta oferta, float valorFinal,
-                       TipoOperacion tipoOperacion, LocalDate fecha, InmoSmart ownedByInmoSmart) {
+                       TipoOperacion tipoOperacion) {
         this.codigoTransaccion = codigoTransaccion;
         this.oferta = oferta;
         this.valorFinal = valorFinal;
         this.tipoOperacion = tipoOperacion;
-        this.fecha = fecha;
-        OwnedByInmoSmart = ownedByInmoSmart;
+        this.fecha = LocalDate.now();
     }
 
     public String getCodigoTransaccion() {
@@ -64,14 +61,6 @@ public class Transaccion {
         this.fecha = fecha;
     }
 
-    public InmoSmart getOwnedByInmoSmart() {
-        return OwnedByInmoSmart;
-    }
-
-    public void setOwnedByInmoSmart(InmoSmart ownedByInmoSmart) {
-        OwnedByInmoSmart = ownedByInmoSmart;
-    }
-
     @Override
     public String toString() {
         return "Transaccion{" +
@@ -80,7 +69,6 @@ public class Transaccion {
                 ", valorFinal=" + valorFinal +
                 ", tipoOperacion=" + tipoOperacion +
                 ", fecha=" + fecha +
-                ", OwnedByInmoSmart=" + OwnedByInmoSmart +
                 '}';
     }
 }

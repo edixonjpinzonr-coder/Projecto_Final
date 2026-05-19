@@ -1,22 +1,29 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
+import co.edu.uniquindio.poo.projecto_final.model.enums.Estado;
+import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
+import co.edu.uniquindio.poo.projecto_final.model.enums.TipoInmueble;
+import co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion;
 import co.edu.uniquindio.poo.projecto_final.services.INotificar;
 import co.edu.uniquindio.poo.projecto_final.services.IOperacion;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InmoSmart implements IOperacion {
     private String nombre;
 
-    private ArrayList<Usuario> listaUsuarios;
-    private ArrayList<Inmueble> listaInmuebles;
-    private ArrayList<Publicacion> listaPublicaciones;
-    private ArrayList<Transaccion> listaTransacciones;
-    private ArrayList<Alerta> listaAlertas;
-    private ArrayList<INotificar> listaNotificaciones;
-    private ArrayList<Oferta> listaOfertas;
+    private List<Usuario> listaUsuarios;
+    private List<Inmueble> listaInmuebles;
+    private List<Publicacion> listaPublicaciones;
+    private List<Transaccion> listaTransacciones;
+    private List<Alerta> listaAlertas;
+    private List<INotificar> listaNotificaciones;
+    private List<Oferta> listaOfertas;
 
     public InmoSmart(String nombre) {
         this.nombre = nombre;
@@ -38,55 +45,55 @@ public class InmoSmart implements IOperacion {
         this.nombre = nombre;
     }
 
-    public ArrayList<Usuario> getListaUsuarios() {
+    public List<Usuario> getListaUsuarios() {
         return listaUsuarios;
     }
 
-    public void setListaUsuarios(ArrayList<Usuario> listaUsuarios) {
+    public void setListaUsuarios(List<Usuario> listaUsuarios) {
         this.listaUsuarios = listaUsuarios;
     }
 
-    public ArrayList<Inmueble> getListaInmuebles() {
+    public List<Inmueble> getListaInmuebles() {
         return listaInmuebles;
     }
 
-    public void setListaInmuebles(ArrayList<Inmueble> listaInmuebles) {
+    public void setListaInmuebles(List<Inmueble> listaInmuebles) {
         this.listaInmuebles = listaInmuebles;
     }
 
-    public ArrayList<Publicacion> getListaPublicaciones() {
+    public List<Publicacion> getListaPublicaciones() {
         return listaPublicaciones;
     }
 
-    public void setListaPublicaciones(ArrayList<Publicacion> listaPublicaciones) {
+    public void setListaPublicaciones(List<Publicacion> listaPublicaciones) {
         this.listaPublicaciones = listaPublicaciones;
     }
 
-    public ArrayList<Transaccion> getListaTransacciones() {
+    public List<Transaccion> getListaTransacciones() {
         return listaTransacciones;
     }
 
-    public void setListaTransacciones(ArrayList<Transaccion> listaTransacciones) {
+    public void setListaTransacciones(List<Transaccion> listaTransacciones) {
         this.listaTransacciones = listaTransacciones;
     }
 
-    public ArrayList<Alerta> getListaAlertas() {
+    public List<Alerta> getListaAlertas() {
         return listaAlertas;
     }
 
-    public void setListaAlertas(ArrayList<Alerta> listaAlertas) {
+    public void setListaAlertas(List<Alerta> listaAlertas) {
         this.listaAlertas = listaAlertas;
     }
 
-    public ArrayList<INotificar> getListaNotificaciones() {
+    public List<INotificar> getListaNotificaciones() {
         return listaNotificaciones;
     }
 
-    public void setListaNotificaciones(ArrayList<INotificar> listaNotificaciones) {
+    public void setListaNotificaciones(List<INotificar> listaNotificaciones) {
         this.listaNotificaciones = listaNotificaciones;
     }
 
-    public ArrayList<Oferta> getListaOfertas() {
+    public List<Oferta> getListaOfertas() {
         return listaOfertas;
     }
 
@@ -138,8 +145,13 @@ public class InmoSmart implements IOperacion {
     public boolean publicarInmueble(Inmueble inmueble) {
         boolean bandera = false;
         Inmueble inmueble1 = buscarinmueble(inmueble.getCodigo());
+
         if(inmueble1 == null){
             listaInmuebles.add(inmueble);
+            if (inmueble.getVendedor() != null) {
+                inmueble.getVendedor().sumarPuntosReputacion("1");
+            }
+
             bandera = true;
         }
         return bandera;
@@ -147,34 +159,182 @@ public class InmoSmart implements IOperacion {
 
     @Override
     public boolean realizarOferta(Oferta oferta) {
-        boolean bandera = false;
-        if(oferta==null || oferta.getComprador()==null || oferta.getInmueble()==null){
+        if (oferta == null || oferta.getComprador() == null || oferta.getInmueble() == null) {
             return false;
         }
-        if(oferta.getValorOferta()<=0){
-           System.out.println("Error, valor invalido");
-           return bandera;
+
+        if (oferta.getValorOferta() <= 0) {
+            System.out.println("Error, valor inválido");
+            return false;
         }
         listaOfertas.add(oferta);
 
-        oferta.getComprador().getListaOfertas().remove(oferta);
+        oferta.getComprador().getListaOfertas().add(oferta);
+
+        oferta.getComprador().sumarPuntosReputacion("1");
         oferta.getInmueble().getListaOfertas().add(oferta);
 
-        bandera = true;
         System.out.println("Oferta agregada correctamente para el inmueble " +
                 oferta.getInmueble().getCodigo());
-        return bandera;
 
+        return true;
+    }
+
+    @Override
+    public boolean registrarTransaccion(Oferta oferta, TipoOperacion tipoOperacion) {
+        boolean bandera = false;
+        if (oferta != null && oferta.getEstadoOferta() == EstadoOferta.ACEPTADA) {
+            String codigo = "TR-" + (listaTransacciones.size() + 1);
+            Transaccion nuevaTransaccion = new Transaccion(
+                    codigo,
+                    oferta,
+                    oferta.getValorOferta(),
+                    tipoOperacion
+            );
+            listaTransacciones.add(nuevaTransaccion);
+            if(tipoOperacion == TipoOperacion.ARRIENDO){
+                oferta.getInmueble().setEstado(Estado.RESERVADO);
+            }else{
+                oferta.getInmueble().setEstado(Estado.VENDIDO);
+            }
+
+            oferta.getComprador().sumarPuntosReputacion("2");
+            if (oferta.getInmueble().getVendedor() != null) {
+                oferta.getInmueble().getVendedor().sumarPuntosReputacion("2");
+            }
+            bandera = true;
+            System.out.println("Transacción "+codigo + " registrada con éxito para el inmueble " +
+                    oferta.getInmueble().getCodigo());
+        } else {
+            System.out.println("Error ");
+        }
+
+        return bandera;
+    }
+
+    @Override
+    public List<Inmueble> buscarInmueblesConFiltro(Comprador comprador, String ciudad,
+                                                   TipoInmueble tipo, float precioMin,
+                                                   float precioMax, float areaMinima) {
+
+            if (comprador!= null) {
+                Historial busquedaActual= new Historial(ciudad, tipo, precioMin, precioMax,
+                        areaMinima, LocalDate.now());
+                comprador.getListaHistorial().add(busquedaActual);
+            }
+            List<Inmueble> resultados= new ArrayList<>();
+
+            for (Inmueble inmueble: listaInmuebles) {
+                if (inmueble.getEstado()== Estado.DISPONIBLE) {
+
+                    boolean cumpleCiudad= (ciudad==null || ciudad.isEmpty() || inmueble.getCiudad().equalsIgnoreCase(ciudad));
+                    boolean cumplePrecio= (inmueble.getPrecio()>= precioMin && inmueble.getPrecio()<= precioMax);
+                    boolean cumpleArea = (inmueble.getArea() >= areaMinima);
+
+                    boolean cumpleTipo = false;
+                    if (tipo== null) {
+                        cumpleTipo = true;
+                    }else if(tipo == TipoInmueble.CASA && inmueble instanceof Casa) {
+                        cumpleTipo = true;
+                    }else if(tipo == TipoInmueble.APARTAMENTO && inmueble instanceof Apartamento) {
+                        cumpleTipo = true;
+                    }else if(tipo == TipoInmueble.LOCAL && inmueble instanceof Local) {
+                        cumpleTipo = true;
+                    }else if(tipo == TipoInmueble.TERRENO && inmueble instanceof Terreno) {
+                        cumpleTipo = true;
+                    }
+
+                    if (cumpleCiudad && cumplePrecio && cumpleArea && cumpleTipo) {
+                        resultados.add(inmueble);
+                    }
+                }
+            }
+            return resultados;
+    }
+
+    @Override
+    public List<Inmueble> recomendarInmuebles(Comprador comprador) {
+        List<Inmueble> recomendaciones = new ArrayList<>();
+        if (comprador== null || comprador.getListaHistorial().isEmpty()) {
+            return recomendaciones;
+        }
+        Historial ultimoGusto = comprador.getListaHistorial().get(comprador.getListaHistorial().size()-1);
+        for (Inmueble inmueble : listaInmuebles) {
+            if (inmueble.getEstado() == Estado.DISPONIBLE) {
+                boolean coincideCiudad= ultimoGusto.getCiudadBusqueda()==null ||
+                        inmueble.getCiudad().equalsIgnoreCase(ultimoGusto.getCiudadBusqueda());
+                boolean coincidePrecio= inmueble.getPrecio()>= ultimoGusto.getPrecioMinimo() &&
+                        inmueble.getPrecio() <= ultimoGusto.getPrecioMaximo();
+                if (coincideCiudad && coincidePrecio) {
+                    recomendaciones.add(inmueble);
+                }
+            }
+        }
+        return recomendaciones;
     }
 
     @Override
     public void generarReporte() {
-        System.out.println("Reporte de InmoSmart "+"\n"+
-                "Total de Usuarios: "+ listaUsuarios.size()+"\n"+
-                "Total de Inmuebles: "+ listaInmuebles.size()+"\n"+
-                "Total de ofertas realizadas "+ listaOfertas.size()+"\n");
+        System.out.println("\n================ REPORTES GLOBALES INMOSMART ================");
+        System.out.println("Total de Usuarios registrados: " + listaUsuarios.size());
+        System.out.println("Total de Inmuebles en plataforma: " + listaInmuebles.size());
+        System.out.println("Total de Ofertas procesadas: " + listaOfertas.size());
+        System.out.println("Total de Transacciones cerradas: " + listaTransacciones.size());
 
+        // 1. Ciudades con mayor demanda
+        Map<String, Integer> demandaCiudades = new HashMap<>();
+        for (Oferta o : listaOfertas) {
+            String ciudad = o.getInmueble().getCiudad();
+            demandaCiudades.put(ciudad, demandaCiudades.getOrDefault(ciudad, 0) + 1);
+        }
+        System.out.println("Demanda por Ciudades: " + demandaCiudades);
 
+        // 2. Comprador más activo
+        Comprador masActivo = null;
+        int maxOfertas = -1;
+        for (Usuario u : listaUsuarios) {
+            if (u instanceof Comprador comp) {
+                if (comp.getListaOfertas().size() > maxOfertas) {
+                    maxOfertas = comp.getListaOfertas().size();
+                    masActivo = comp;
+                }
+            }
+        }
+        if (masActivo != null) {
+            System.out.println("Comprador más activo: " + masActivo.getNombre());
+        }
+
+        // 3. ¡NUEVO! Tipo de Inmueble más vendido (Conteo por tipo de clase)
+        int casas = 0, aptos = 0, locales = 0, terrenos = 0;
+        for (Transaccion t : listaTransacciones) {
+            Inmueble i = t.getOferta().getInmueble();
+            if (i instanceof Casa) casas++;
+            else if (i instanceof Apartamento) aptos++;
+            else if (i instanceof Local) locales++;
+            else if (i instanceof Terreno) terrenos++;
+        }
+        System.out.println("Tipos de Inmuebles vendidos -> Casas: " + casas + ", Aptos: " + aptos + ", Locales: " + locales + ", Terrenos: " + terrenos);
+
+        // 4. ¡NUEVO! Vendedor con más propiedades publicadas en la plataforma
+        Vendedor mejorVendedor = null;
+        int maxPropiedades = -1;
+        for (Usuario u : listaUsuarios) {
+            if (u instanceof Vendedor vend) {
+                int conteo = 0;
+                for(Inmueble inm : listaInmuebles) {
+                    if(inm.getVendedor() != null && inm.getVendedor().getIdentificacion().equals(vend.getIdentificacion())) {
+                        conteo++;
+                    }
+                }
+                if (conteo > maxPropiedades) {
+                    maxPropiedades = conteo;
+                    mejorVendedor = vend;
+                }
+            }
+        }
+        if (mejorVendedor != null) {
+            System.out.println("Vendedor con más propiedades: " + mejorVendedor.getNombre() + " (" + maxPropiedades + " propiedades)");
+        }
+        System.out.println("=============================================================\n");
     }
-
 }

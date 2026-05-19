@@ -4,11 +4,12 @@ import co.edu.uniquindio.poo.projecto_final.model.enums.Estado;
 import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Comprador extends Usuario{
 
-    private ArrayList<Historial> listaHistorial;
-    private ArrayList<Oferta> listaOfertas;
+    private List<Historial> listaHistorial;
+    private List<Oferta> listaOfertas;
 
     public Comprador( String nombre, String identificacion,
                      String telefono, String correo) {
@@ -17,7 +18,7 @@ public class Comprador extends Usuario{
         this.listaOfertas = new ArrayList<>();
     }
 
-    public ArrayList<Historial> getListaHistorial() {
+    public List<Historial> getListaHistorial() {
         return listaHistorial;
     }
 
@@ -25,7 +26,7 @@ public class Comprador extends Usuario{
         this.listaHistorial = listaHistorial;
     }
 
-    public ArrayList<Oferta> getListaOfertas() {
+    public List<Oferta> getListaOfertas() {
         return listaOfertas;
     }
 
@@ -66,7 +67,6 @@ public class Comprador extends Usuario{
     @Override
     public double calcularBeneficio() {
         double ahorroTotal = 0;
-        // Recorremos las ofertas que le han aceptado al comprador
         for (Oferta oferta : listaOfertas) {
             if (oferta.getEstadoOferta() == EstadoOferta.ACEPTADA) {
                 double precioOriginal = oferta.getInmueble().getPrecio();

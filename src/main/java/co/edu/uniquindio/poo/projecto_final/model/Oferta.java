@@ -1,7 +1,6 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
 import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
-
 import java.time.LocalDate;
 
 public class Oferta {
@@ -14,7 +13,7 @@ public class Oferta {
     private InmoSmart ownedByInmoSmart;
 
     public Oferta(String codigo, Comprador comprador, Inmueble inmueble, float valorOferta,
-                  LocalDate fechaoferta, EstadoOferta estadoOferta,  InmoSmart ownedByInmoSmart) {
+                  LocalDate fechaoferta, EstadoOferta estadoOferta, InmoSmart ownedByInmoSmart) {
         this.codigo = codigo;
         this.comprador = comprador;
         this.inmueble = inmueble;
@@ -24,72 +23,31 @@ public class Oferta {
         this.ownedByInmoSmart = ownedByInmoSmart;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
+    public Comprador getComprador() { return comprador; }
+    public void setComprador(Comprador comprador) { this.comprador = comprador; }
 
-    public Comprador getComprador() {
-        return comprador;
-    }
+    public Inmueble getInmueble() { return inmueble; }
+    public void setInmueble(Inmueble inmueble) { this.inmueble = inmueble; }
 
-    public void setComprador(Comprador comprador) {
-        this.comprador = comprador;
-    }
+    public float getValorOferta() { return valorOferta; }
+    public void setValorOferta(float valorOferta) { this.valorOferta = valorOferta; }
 
-    public Inmueble getInmueble() {
-        return inmueble;
-    }
+    public LocalDate getFechaoferta() { return fechaoferta; }
+    public void setFechaoferta(LocalDate fechaoferta) { this.fechaoferta = fechaoferta; }
 
-    public void setInmueble(Inmueble inmueble) {
-        this.inmueble = inmueble;
-    }
+    public EstadoOferta getEstadoOferta() { return estadoOferta; }
+    public void setEstadoOferta(EstadoOferta estadoOferta) { this.estadoOferta = estadoOferta; }
 
-    public float getValorOferta() {
-        return valorOferta;
-    }
-
-    public void setValorOferta(float valorOferta) {
-        this.valorOferta = valorOferta;
-    }
-
-    public LocalDate getFechaoferta() {
-        return fechaoferta;
-    }
-
-    public void setFechaoferta(LocalDate fechaoferta) {
-        this.fechaoferta = fechaoferta;
-    }
-
-    public EstadoOferta getEstadoOferta() {
-        return estadoOferta;
-    }
-
-    public void setEstadoOferta(EstadoOferta estadoOferta) {
-        this.estadoOferta = estadoOferta;
-    }
-
-    public InmoSmart getOwnedByInmoSmart() {
-        return ownedByInmoSmart;
-    }
-
-    public void setOwnedByInmoSmart(InmoSmart ownedByInmoSmart) {
-        this.ownedByInmoSmart = ownedByInmoSmart;
-    }
+    public InmoSmart getOwnedByInmoSmart() { return ownedByInmoSmart; }
+    public void setOwnedByInmoSmart(InmoSmart ownedByInmoSmart) { this.ownedByInmoSmart = ownedByInmoSmart; }
 
     @Override
     public String toString() {
-        return "Oferta{" +
-                "codigo='" + codigo + '\'' +
-                ", comprador=" + comprador +
-                ", inmueble=" + inmueble +
-                ", valorOferta=" + valorOferta +
-                ", fechaoferta=" + fechaoferta +
-                ", estadoOferta=" + estadoOferta +
-                ", ownedByInmoSmart=" + ownedByInmoSmart +
-                '}';
+        return "Oferta{" + "codigo='" + codigo + '\'' + ", valorOferta=" + valorOferta +
+                ", estadoOferta=" + estadoOferta + '}';
     }
+
 }

@@ -39,7 +39,7 @@ public class  Vendedor extends Usuario {
                 System.out.println(this.puntosReputacion);
                 break;
 
-            case "3"://completar Transaccion
+            case "2"://completar Transaccion
                 this.puntosReputacion += 100;
                 System.out.println(this.puntosReputacion);
                 break;
