@@ -217,39 +217,39 @@ public class InmoSmart implements IOperacion {
                                                    TipoInmueble tipo, float precioMin,
                                                    float precioMax, float areaMinima) {
 
-            if (comprador!= null) {
-                Historial busquedaActual= new Historial(ciudad, tipo, precioMin, precioMax,
-                        areaMinima, LocalDate.now());
-                comprador.getListaHistorial().add(busquedaActual);
-            }
-            List<Inmueble> resultados= new ArrayList<>();
+        if (comprador!= null) {
+            Historial busquedaActual= new Historial(ciudad, tipo, precioMin, precioMax,
+                    areaMinima, LocalDate.now());
+            comprador.getListaHistorial().add(busquedaActual);
+        }
+        List<Inmueble> resultados= new ArrayList<>();
 
-            for (Inmueble inmueble: listaInmuebles) {
-                if (inmueble.getEstado()== Estado.DISPONIBLE) {
+        for (Inmueble inmueble: listaInmuebles) {
+            if (inmueble.getEstado()== Estado.DISPONIBLE) {
 
-                    boolean cumpleCiudad= (ciudad==null || ciudad.isEmpty() || inmueble.getCiudad().equalsIgnoreCase(ciudad));
-                    boolean cumplePrecio= (inmueble.getPrecio()>= precioMin && inmueble.getPrecio()<= precioMax);
-                    boolean cumpleArea = (inmueble.getArea() >= areaMinima);
+                boolean cumpleCiudad= (ciudad==null || ciudad.isEmpty() || inmueble.getCiudad().equalsIgnoreCase(ciudad));
+                boolean cumplePrecio= (inmueble.getPrecio()>= precioMin && inmueble.getPrecio()<= precioMax);
+                boolean cumpleArea = (inmueble.getArea() >= areaMinima);
 
-                    boolean cumpleTipo = false;
-                    if (tipo== null) {
-                        cumpleTipo = true;
-                    }else if(tipo == TipoInmueble.CASA && inmueble instanceof Casa) {
-                        cumpleTipo = true;
-                    }else if(tipo == TipoInmueble.APARTAMENTO && inmueble instanceof Apartamento) {
-                        cumpleTipo = true;
-                    }else if(tipo == TipoInmueble.LOCAL && inmueble instanceof Local) {
-                        cumpleTipo = true;
-                    }else if(tipo == TipoInmueble.TERRENO && inmueble instanceof Terreno) {
-                        cumpleTipo = true;
-                    }
+                boolean cumpleTipo = false;
+                if (tipo== null) {
+                    cumpleTipo = true;
+                }else if(tipo == TipoInmueble.CASA && inmueble instanceof Casa) {
+                    cumpleTipo = true;
+                }else if(tipo == TipoInmueble.APARTAMENTO && inmueble instanceof Apartamento) {
+                    cumpleTipo = true;
+                }else if(tipo == TipoInmueble.LOCAL && inmueble instanceof Local) {
+                    cumpleTipo = true;
+                }else if(tipo == TipoInmueble.TERRENO && inmueble instanceof Terreno) {
+                    cumpleTipo = true;
+                }
 
-                    if (cumpleCiudad && cumplePrecio && cumpleArea && cumpleTipo) {
-                        resultados.add(inmueble);
-                    }
+                if (cumpleCiudad && cumplePrecio && cumpleArea && cumpleTipo) {
+                    resultados.add(inmueble);
                 }
             }
-            return resultados;
+        }
+        return resultados;
     }
 
     @Override
@@ -275,25 +275,23 @@ public class InmoSmart implements IOperacion {
 
     @Override
     public void generarReporte() {
-        System.out.println("\n================ REPORTES GLOBALES INMOSMART ================");
+        System.out.println("\nREPORTES DE INMOSMART");
         System.out.println("Total de Usuarios registrados: " + listaUsuarios.size());
         System.out.println("Total de Inmuebles en plataforma: " + listaInmuebles.size());
         System.out.println("Total de Ofertas procesadas: " + listaOfertas.size());
         System.out.println("Total de Transacciones cerradas: " + listaTransacciones.size());
 
-        // 1. Ciudades con mayor demanda
-        Map<String, Integer> demandaCiudades = new HashMap<>();
+        Map<String, Integer> demandaCiudades=new HashMap<>();
         for (Oferta o : listaOfertas) {
             String ciudad = o.getInmueble().getCiudad();
             demandaCiudades.put(ciudad, demandaCiudades.getOrDefault(ciudad, 0) + 1);
         }
-        System.out.println("Demanda por Ciudades: " + demandaCiudades);
+        System.out.println("Demanda por Ciudades: "+demandaCiudades);
 
-        // 2. Comprador más activo
         Comprador masActivo = null;
         int maxOfertas = -1;
-        for (Usuario u : listaUsuarios) {
-            if (u instanceof Comprador comp) {
+        for (Usuario usuario : listaUsuarios) {
+            if (usuario instanceof Comprador comp) {
                 if (comp.getListaOfertas().size() > maxOfertas) {
                     maxOfertas = comp.getListaOfertas().size();
                     masActivo = comp;
@@ -301,40 +299,38 @@ public class InmoSmart implements IOperacion {
             }
         }
         if (masActivo != null) {
-            System.out.println("Comprador más activo: " + masActivo.getNombre());
+            System.out.println("Comprador más activo: "+masActivo.getNombre());
         }
 
-        // 3. ¡NUEVO! Tipo de Inmueble más vendido (Conteo por tipo de clase)
-        int casas = 0, aptos = 0, locales = 0, terrenos = 0;
-        for (Transaccion t : listaTransacciones) {
-            Inmueble i = t.getOferta().getInmueble();
+        int casas =0, apartamentos = 0, locales = 0, terrenos = 0;
+        for (Transaccion transaccion : listaTransacciones) {
+            Inmueble i = transaccion.getOferta().getInmueble();
             if (i instanceof Casa) casas++;
-            else if (i instanceof Apartamento) aptos++;
+            else if (i instanceof Apartamento) apartamentos++;
             else if (i instanceof Local) locales++;
             else if (i instanceof Terreno) terrenos++;
         }
-        System.out.println("Tipos de Inmuebles vendidos -> Casas: " + casas + ", Aptos: " + aptos + ", Locales: " + locales + ", Terrenos: " + terrenos);
+        System.out.println("Tipos de Inmuebles vendidos: Casas: "+casas+ "\n Apartamentos: " +
+                apartamentos+ "\nLocales: " +locales+ "\n Terrenos: " +terrenos);
 
-        // 4. ¡NUEVO! Vendedor con más propiedades publicadas en la plataforma
         Vendedor mejorVendedor = null;
         int maxPropiedades = -1;
-        for (Usuario u : listaUsuarios) {
-            if (u instanceof Vendedor vend) {
-                int conteo = 0;
+        for (Usuario usuario : listaUsuarios) {
+            if (usuario instanceof Vendedor vend) {
+                int conteo= 0;
                 for(Inmueble inm : listaInmuebles) {
                     if(inm.getVendedor() != null && inm.getVendedor().getIdentificacion().equals(vend.getIdentificacion())) {
                         conteo++;
                     }
                 }
-                if (conteo > maxPropiedades) {
-                    maxPropiedades = conteo;
-                    mejorVendedor = vend;
+                if (conteo> maxPropiedades) {
+                    maxPropiedades= conteo;
+                    mejorVendedor= vend;
                 }
             }
         }
         if (mejorVendedor != null) {
-            System.out.println("Vendedor con más propiedades: " + mejorVendedor.getNombre() + " (" + maxPropiedades + " propiedades)");
+            System.out.println("Vendedor con más propiedades: " +mejorVendedor.getNombre() + " (" + maxPropiedades + " propiedades)\n");
         }
-        System.out.println("=============================================================\n");
     }
 }

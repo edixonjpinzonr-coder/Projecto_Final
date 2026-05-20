@@ -13,6 +13,11 @@ public class Terreno extends Inmueble{
         this.metrosCuadrados= metrosCuadrados;
     }
 
+    public Terreno(String codigo, String direccion, float area, float precio) {
+        super(codigo, direccion, area, precio);
+        this.metrosCuadrados = metrosCuadrados;
+    }
+
     public int getMetrosCuadrados() {
         return metrosCuadrados;
     }

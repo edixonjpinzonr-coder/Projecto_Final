@@ -27,6 +27,16 @@ public abstract class Inmueble {
         this.vendedor=vendedor;
         this.listaOfertas=new ArrayList<>();
     }
+    public Inmueble(String codigo, String direccion, float area, float precio){
+        this.codigo = codigo;
+        this.direccion = direccion;
+        this.ciudad=ciudad;
+        this.area = area;
+        this.precio = precio;
+        this.estado = estado;
+        this.vendedor=vendedor;
+        this.listaOfertas=new ArrayList<>();
+    }
 
     public String getCodigo() {
         return codigo;
