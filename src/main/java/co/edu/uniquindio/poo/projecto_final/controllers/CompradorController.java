@@ -5,10 +5,7 @@ import co.edu.uniquindio.poo.projecto_final.model.Inmueble;
 import co.edu.uniquindio.poo.projecto_final.model.enums.TipoInmueble;
 import co.edu.uniquindio.poo.projecto_final.services.ModelFactoryService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.util.List;
 
@@ -20,6 +17,7 @@ public class CompradorController {
     @FXML private TextField txtAreaMinima;
     @FXML private ComboBox<String> comboTipoInmueble;
     @FXML private TableView<Inmueble> tablaBusqueda;
+    @FXML private Label lblBienvenida;
 
 
     private Comprador compradorLogueado;
@@ -58,6 +56,10 @@ public class CompradorController {
         } catch (NumberFormatException e) {
             mostrarMensaje("Error de formato Los precios y el área deben ser valores numéricos.", Alert.AlertType.ERROR);
         }
+    }
+
+    public void setNombreVendedor(String nombre) {
+        lblBienvenida.setText("Bienvenido, " + nombre);
     }
 
     public void mostrarMensaje(String mensaje, Alert.AlertType tipo) {

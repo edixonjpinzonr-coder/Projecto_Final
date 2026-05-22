@@ -3,10 +3,7 @@ package co.edu.uniquindio.poo.projecto_final.controllers;
 import co.edu.uniquindio.poo.projecto_final.model.*;
 import co.edu.uniquindio.poo.projecto_final.services.ModelFactoryService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 public class VendedorController {
 
@@ -15,15 +12,16 @@ public class VendedorController {
     @FXML private TextField txtArea;
     @FXML private TextField txtPrecio;
 
-    @FXML private ComboBox<String> comboTipoinmueble;
+    @FXML private ComboBox<String> comboTipoInmueble;
     @FXML private TableView<Inmueble> tablaInmuebles;
+    @FXML private Label lblBienvenida;
 
 
 
     @FXML
     private void initialize() {
-        if(comboTipoinmueble != null) {
-            comboTipoinmueble.getItems().addAll("Casa", "Apartamento", "Local", "Terreno");
+        if(comboTipoInmueble != null) {
+            comboTipoInmueble.getItems().addAll("Casa", "Apartamento", "Local", "Terreno");
         }
     }
 
@@ -34,7 +32,7 @@ public class VendedorController {
             String direccion = txtDireccion.getText();
             float area= Float.parseFloat(txtArea.getText());
             float precio= Float.parseFloat(txtPrecio.getText());
-            String tipo= comboTipoinmueble.getValue();
+            String tipo= comboTipoInmueble.getValue();
 
             Inmueble nuevoinmueble = null;
             if("Casa".equals(tipo)){
@@ -56,6 +54,10 @@ public class VendedorController {
         }catch (NumberFormatException exception){
             mostrarMensaje("Error de datos: El precio y el área deben ser números.", Alert.AlertType.ERROR);
         }
+    }
+
+    public void setNombreVendedor(String nombre) {
+        lblBienvenida.setText("Bienvenido, " + nombre);
     }
 
     private void limpiarCampos() {
