@@ -20,7 +20,7 @@ public class Oferta {
         this.inmueble = inmueble;
         this.valorOferta = valorOferta;
         this.fechaoferta = fechaoferta;
-        this.valorContrapropuesta = valorContrapropuesta;
+        this.valorContrapropuesta = 0;
         this.estadoOferta = estadoOferta;
         this.ownedByInmoSmart = ownedByInmoSmart;
     }

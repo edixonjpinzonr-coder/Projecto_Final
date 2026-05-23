@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.projecto_final.controllers;
 
 import co.edu.uniquindio.poo.projecto_final.model.*;
+import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
 import co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta;
 import co.edu.uniquindio.poo.projecto_final.services.ModelFactoryService;
 import javafx.collections.FXCollections;
@@ -12,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class VendedorController {
 
@@ -21,23 +23,27 @@ public class VendedorController {
     @FXML private TextField txtPrecio;
     @FXML private ComboBox<String> comboTipoInmueble;
     @FXML private TableView<Inmueble> tablaInmuebles;
+
     @FXML private Label lblBienvenida;
     @FXML private TableColumn<Inmueble, String> colCodigo;
     @FXML private TableColumn<Inmueble, String> colCiudad;
     @FXML private TableColumn<Inmueble, Float> colArea;
     @FXML private TableColumn<Inmueble, Float> colPrecio;
+
     @FXML private TableView<Oferta> tablaOfertas;
     @FXML private TableColumn<Oferta, String> colOfInmueble;
     @FXML private TableColumn<Oferta, String> colOfComprador;
     @FXML private TableColumn<Oferta, Double> colOfValor;
     @FXML private TableColumn<Oferta, String> colOfEstado;
 
+    @FXML private Button btnAceptarOferta;
+    @FXML private Label lblPuntos;
+    @FXML private Label lblRango;
 
     private Vendedor vendedorLogueado;
 
     @FXML
     private void initialize() {
-
         if (comboTipoInmueble != null) {
             comboTipoInmueble.getItems().addAll("Casa", "Apartamento", "Local", "Terreno");
         }
@@ -47,7 +53,6 @@ public class VendedorController {
             colArea.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("area"));
             colPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
         }
-
         if (tablaOfertas != null) {
             colOfInmueble.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInmueble().getCodigo()));
             colOfComprador.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getComprador().getNombre()));
@@ -55,6 +60,21 @@ public class VendedorController {
             colOfEstado.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("estadoOferta"));
         }
 
+        if (tablaOfertas != null) {
+            tablaOfertas.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta estado = newSelection.getEstadoOferta();
+                    if (estado == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.PENDIENTE ||
+                            estado == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA_POR_COMPRADOR) {
+                        btnAceptarOferta.setDisable(false);
+                    } else {
+                        btnAceptarOferta.setDisable(true);
+                    }
+                } else {
+                    btnAceptarOferta.setDisable(true);
+                }
+            });
+        }
         Usuario usuarioClase = ModelFactoryService.getInstance().getInmoSmart().buscarUsuario("4321");
         if (usuarioClase instanceof Vendedor) {
             this.vendedorLogueado = (Vendedor) usuarioClase;
@@ -62,6 +82,10 @@ public class VendedorController {
 
         actualizarTabla();
         actualizarTablaOfertas();
+        if (btnAceptarOferta != null) {
+            btnAceptarOferta.setDisable(true);
+        }
+        actualizarDatosPerfil();
     }
 
     @FXML
@@ -105,6 +129,7 @@ public class VendedorController {
                 mostrarMensaje("Éxito: Inmueble publicado correctamente", Alert.AlertType.INFORMATION);
                 actualizarTabla();
                 limpiarCampos();
+                actualizarDatosPerfil();
             } else {
                 mostrarMensaje("Error: Ya existe un inmueble con ese código", Alert.AlertType.ERROR);
             }
@@ -116,27 +141,51 @@ public class VendedorController {
     @FXML
     private void onAceptarOfertaClick() {
         Oferta seleccionada = tablaOfertas.getSelectionModel().getSelectedItem();
-
         if (seleccionada == null) {
             mostrarMensaje("Por favor, seleccione una oferta de la tabla.", Alert.AlertType.WARNING);
             return;
         }
-        seleccionada.setEstadoOferta(co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA);
-        boolean exitoTr = ModelFactoryService.getInstance().getInmoSmart().registrarTransaccion(
-                seleccionada,
-                co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion.VENTA
-        );
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Tipo de Transacción");
+        confirmacion.setHeaderText("Cierre de Negocio: " + seleccionada.getInmueble().getCodigo());
+        confirmacion.setContentText("¿Esta transacción se consolidará como una Venta o un Arriendo?");
 
-        if (exitoTr) {
-            mostrarMensaje("Oferta aceptada. Se ha generado la transacción exitosamente.", Alert.AlertType.INFORMATION);
-            String mensajeNotif = "¡Buenas noticias! Tu oferta para el inmueble " + seleccionada.getInmueble().getCodigo() + " ha sido ACEPTADA.";
-            simularNotificaciones(seleccionada.getComprador(), co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_ACEPTADA, seleccionada.getInmueble());
+        ButtonType btnVenta = new ButtonType("Venta");
+        ButtonType btnArriendo = new ButtonType("Arriendo");
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-            actualizarTabla();
-            actualizarTablaOfertas();
-        } else {
-            mostrarMensaje("Error al procesar la transacción.", Alert.AlertType.ERROR);
-        }
+        confirmacion.getButtonTypes().setAll(btnVenta, btnArriendo, btnCancelar);
+
+        confirmacion.showAndWait().ifPresent(response -> {
+            if (response == btnCancelar) {
+                return;
+            }
+            co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion tipo;
+            if (response == btnVenta) {
+                tipo = co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion.VENTA;
+                seleccionada.getInmueble().setEstado(co.edu.uniquindio.poo.projecto_final.model.enums.Estado.VENDIDO);
+
+            } else {
+                tipo = co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion.ARRIENDO;
+                seleccionada.getInmueble().setEstado(co.edu.uniquindio.poo.projecto_final.model.enums.Estado.ARRENDADO);
+
+            }
+            seleccionada.setEstadoOferta(co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA);
+            boolean exitoTr = ModelFactoryService.getInstance().getInmoSmart().registrarTransaccion(
+                    seleccionada,
+                    tipo
+            );
+
+            if (exitoTr) {
+                mostrarMensaje("¡Éxito! Oferta aceptada y transacción de " + tipo + " generada exitosamente.", Alert.AlertType.INFORMATION);
+                simularNotificaciones(seleccionada.getComprador(), co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_ACEPTADA, seleccionada.getInmueble());
+                actualizarTabla();
+                actualizarTablaOfertas();
+                actualizarDatosPerfil();
+            } else {
+                mostrarMensaje("Error al procesar la transacción en la base de datos.", Alert.AlertType.ERROR);
+            }
+        });
     }
 
     @FXML
@@ -165,6 +214,35 @@ public class VendedorController {
         }
         abrirModalOferta(seleccionada, "VENDEDOR");
     }
+    @FXML
+    private void onActualizarPrecioClick() {
+        Inmueble inmuebleSeleccionado = tablaInmuebles.getSelectionModel().getSelectedItem();
+        if (inmuebleSeleccionado != null) {
+            TextInputDialog dialog = new TextInputDialog(String.valueOf(inmuebleSeleccionado.getPrecio()));
+            dialog.setTitle("Actualizar Precio");
+            dialog.setHeaderText("Modificar valor del inmueble: " + inmuebleSeleccionado.getCodigo());
+            dialog.setContentText("Ingrese el nuevo precio ($):");
+            dialog.showAndWait().ifPresent(nuevoPrecioStr -> {
+                try {
+                    float nuevoPrecio = Float.parseFloat(nuevoPrecioStr);
+                    if (nuevoPrecio <= 0) {
+                        mostrarMensaje("Error: El precio debe ser un valor mayor a cero.", Alert.AlertType.ERROR);
+                        return;
+                    }
+                    boolean exito = ModelFactoryService.getInstance().getInmoSmart()
+                            .actualizarPrecioInmueble(inmuebleSeleccionado, nuevoPrecio);
+                    if (exito) {
+                        tablaInmuebles.refresh();
+                        mostrarMensaje("Éxito: El precio ha sido actualizado y se envió un correo de alerta a los interesados.", Alert.AlertType.INFORMATION);
+                    }
+                } catch (NumberFormatException e) {
+                    mostrarMensaje("Error: Por favor ingrese un valor numérico válido.", Alert.AlertType.ERROR);
+                }
+            });
+        } else {
+            mostrarMensaje("Atención: Por favor, seleccione un inmueble de la tabla para modificar su precio.", Alert.AlertType.WARNING);
+        }
+    }
 
     private void abrirModalOferta(Oferta oferta, String rol) {
         try {
@@ -188,7 +266,6 @@ public class VendedorController {
             System.out.println("\n--- DISPARANDO CENTRO DE NOTIFICACIONES ---");
             Alerta alerta = new Alerta(
                     tipo,
-                    java.time.LocalDate.now(),
                     inmueble,
                     ModelFactoryService.getInstance().getInmoSmart()
             );
@@ -217,6 +294,13 @@ public class VendedorController {
             stage.show();
         } catch (IOException e) {
             mostrarMensaje("Error al regresar al Login", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void actualizarDatosPerfil() {
+        if (vendedorLogueado != null) {
+            lblPuntos.setText("Puntos: " + vendedorLogueado.getPuntosReputacion());
+            lblRango.setText("Rango: " + vendedorLogueado.obtenerRango().toString());
         }
     }
 
@@ -278,7 +362,8 @@ public class VendedorController {
                 if (of.getInmueble().getVendedor() != null &&
                         of.getInmueble().getVendedor().getIdentificacion().equals(vendedorLogueado.getIdentificacion())) {
                     if (of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.PENDIENTE ||
-                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION) {
+                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION ||
+                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA_POR_COMPRADOR) {
                         misOfertas.add(of);
                     }
                 }

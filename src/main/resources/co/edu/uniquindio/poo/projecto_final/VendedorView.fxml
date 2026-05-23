@@ -15,7 +15,7 @@
       <TextField fx:id="txtArea" layoutX="36.0" layoutY="279.0" />
       <TextField fx:id="txtCiudad" layoutX="36.0" layoutY="208.0" prefHeight="26.0" prefWidth="150.0" />
       <TextField fx:id="txtPrecio" layoutX="36.0" layoutY="344.0" />
-      <Label fx:id="lblBienvenida" layoutX="285.0" layoutY="23.0" text="Bienvenido Usuario">
+      <Label fx:id="lblBienvenida" layoutX="93.0" layoutY="23.0" text="Bienvenido Usuario">
          <font>
             <Font name="Bell MT" size="20.0" />
          </font>
@@ -87,7 +87,7 @@
             <Font name="Bell MT" size="18.0" />
          </font>
       </Label>
-      <Button layoutX="518.0" layoutY="576.0" mnemonicParsing="false" onAction="#onAceptarOfertaClick" text="Aceptar Oferta">
+      <Button fx:id="btnAceptarOferta" layoutX="518.0" layoutY="576.0" mnemonicParsing="false" onAction="#onAceptarOfertaClick" text="Aceptar Oferta">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
@@ -107,5 +107,16 @@
             <Font name="Bell MT" size="15.0" />
          </font>
       </Button>
+      <Button layoutX="269.0" layoutY="195.0" mnemonicParsing="false" onAction="#onActualizarPrecioClick" text="Actualizar Precio" />
+      <Label fx:id="lblPuntos" layoutX="373.0" layoutY="27.0" text="Puntos: 0">
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblRango" layoutX="530.0" layoutY="27.0" text="Rango: Principiante">
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

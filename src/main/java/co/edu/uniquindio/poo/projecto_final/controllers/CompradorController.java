@@ -36,12 +36,14 @@ public class CompradorController {
     @FXML private TableColumn<Inmueble, Float> colSugArea;
     @FXML private TableColumn<Inmueble, Float> colSugPrecio;
 
-    @FXML private TableView<Inmueble> tablaInmuebles;
     @FXML private TableView<Oferta> tablaMisOfertas;
     @FXML private TableColumn<Oferta, String> colOfInmueble;
     @FXML private TableColumn<Oferta, Double> colOfValorOriginal;
     @FXML private TableColumn<Oferta, Double> colOfContrapropuesta;
     @FXML private TableColumn<Oferta, String> colOfEstado;
+
+    @FXML private Label lblPuntos;
+    @FXML private Label lblRango;
 
     private Comprador compradorLogueado;
     @FXML
@@ -78,6 +80,8 @@ public class CompradorController {
         cargarInmueblesIniciales();
         cargarSugerencias();
         actualizarTablaMisOfertas();
+        actualizarDatosPerfil();
+        actualizarDatosPerfil();
 
     }
 
@@ -132,6 +136,7 @@ public class CompradorController {
                 ModelFactoryService.getInstance().getInmoSmart()
         );
         abrirModalOferta(nueva, "COMPRADOR");
+        actualizarDatosPerfil();
     }
 
     @FXML
@@ -171,7 +176,8 @@ public class CompradorController {
                 if (of.getComprador() != null &&
                         of.getComprador().getIdentificacion().equals(compradorLogueado.getIdentificacion())) {
                     if (of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.PENDIENTE ||
-                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION) {
+                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION ||
+                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA_POR_COMPRADOR) {
 
                         misOfertasPropias.add(of);
                     }
@@ -185,10 +191,11 @@ public class CompradorController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/OfertaDialogView.fxml"));
             Parent root = loader.load();
-
             OfertaDialogController controller = loader.getController();
-            controller.inicializarDialogo(oferta, rol, compradorLogueado, () -> actualizarTablaMisOfertas());
-
+            controller.inicializarDialogo(oferta, rol, compradorLogueado, () -> {
+                actualizarTablaMisOfertas();
+                actualizarDatosPerfil();
+            });
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Negociación de Inmueble");
@@ -221,6 +228,13 @@ public class CompradorController {
                     .filter(inm -> inm.getEstado() == co.edu.uniquindio.poo.projecto_final.model.enums.Estado.DISPONIBLE)
                     .toList();
             tablaSugerencias.setItems(javafx.collections.FXCollections.observableArrayList(recomendadosDisponibles));
+        }
+    }
+
+    private void actualizarDatosPerfil() {
+        if (compradorLogueado != null) {
+            lblPuntos.setText("Puntos: " + compradorLogueado.getPuntosReputacion());
+            lblRango.setText("Rango: " + compradorLogueado.obtenerRango().toString());
         }
     }
 

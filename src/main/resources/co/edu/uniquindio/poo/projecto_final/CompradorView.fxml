@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="646.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.CompradorController">
    <children>
-      <Label fx:id="lblBienvenida" layoutX="211.0" layoutY="11.0" text="Bienvenido Comprador">
+      <Label fx:id="lblBienvenida" layoutX="84.0" layoutY="20.0" text="Bienvenido Comprador">
          <font>
             <Font name="Bell MT" size="21.0" />
          </font>
@@ -115,5 +115,15 @@
             <Font name="Bell MT" size="15.0" />
          </font>
       </Button>
+      <Label fx:id="lblPuntos" layoutX="363.0" layoutY="26.0" text="Puntos: 0">
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblRango" layoutX="478.0" layoutY="26.0" text="Rango: Principiante">
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

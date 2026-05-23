@@ -1,9 +1,6 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
-import co.edu.uniquindio.poo.projecto_final.model.enums.Estado;
-import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
-import co.edu.uniquindio.poo.projecto_final.model.enums.TipoInmueble;
-import co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion;
+import co.edu.uniquindio.poo.projecto_final.model.enums.*;
 import co.edu.uniquindio.poo.projecto_final.services.INotificar;
 import co.edu.uniquindio.poo.projecto_final.services.IOperacion;
 
@@ -182,7 +179,10 @@ public class InmoSmart implements IOperacion {
     @Override
     public boolean registrarTransaccion(Oferta oferta, TipoOperacion tipoOperacion) {
         boolean bandera = false;
-        if (oferta != null && oferta.getEstadoOferta() == EstadoOferta.ACEPTADA) {
+        if (oferta != null && (oferta.getEstadoOferta() == EstadoOferta.PENDIENTE ||
+                oferta.getEstadoOferta() == EstadoOferta.ACEPTADA_POR_COMPRADOR)) {
+            oferta.setEstadoOferta(EstadoOferta.ACEPTADA);
+
             String codigo = "TR-" + (listaTransacciones.size() + 1);
             Transaccion nuevaTransaccion = new Transaccion(
                     codigo,
@@ -191,21 +191,25 @@ public class InmoSmart implements IOperacion {
                     tipoOperacion
             );
             listaTransacciones.add(nuevaTransaccion);
-            if(tipoOperacion == TipoOperacion.ARRIENDO){
+            if (tipoOperacion == TipoOperacion.ARRIENDO) {
                 oferta.getInmueble().setEstado(Estado.RESERVADO);
-            }else{
+            } else {
                 oferta.getInmueble().setEstado(Estado.VENDIDO);
             }
-
             oferta.getComprador().sumarPuntosReputacion("2");
+            oferta.getComprador().sumarPuntosReputacion("3");
             if (oferta.getInmueble().getVendedor() != null) {
                 oferta.getInmueble().getVendedor().sumarPuntosReputacion("2");
             }
+            Alerta alertaNegocio = new Alerta(TipoAlerta.OFERTA_ACEPTADA, oferta.getInmueble(), this);
+            INotificar canal = new NotificacionWhatsApp();
+            canal.enviarNotificacion(oferta.getComprador(), alertaNegocio);
+
             bandera = true;
-            System.out.println("Transacción "+codigo + " registrada con éxito para el inmueble " +
+            System.out.println("Transacción " + codigo + " registrada con éxito para el inmueble " +
                     oferta.getInmueble().getCodigo());
         } else {
-            System.out.println("Error ");
+            System.out.println("Error: La oferta debe estar en un estado válido para concretar el cierre del trato.");
         }
 
         return bandera;
@@ -294,6 +298,34 @@ public class InmoSmart implements IOperacion {
         }
 
         return recomendaciones;
+    }
+    @Override
+    public boolean rechazarOferta(Oferta oferta) {
+            if (oferta != null && oferta.getEstadoOferta() == EstadoOferta.PENDIENTE) {
+                oferta.setEstadoOferta(EstadoOferta.RECHAZADA);
+                Alerta alertaRechazada = new Alerta(TipoAlerta.OFERTA_RECHAZADA, oferta.getInmueble(), this);
+                INotificar canalSms = new NotificacionSMS();
+                canalSms.enviarNotificacion(oferta.getComprador(), alertaRechazada);
+                System.out.println("Oferta " + oferta.getCodigo() + " ha sido rechazada.");
+                return true;
+            }
+            return false;
+    }
+
+    @Override
+    public boolean actualizarPrecioInmueble(Inmueble inmueble, float nuevoPrecio) {
+        if (inmueble != null && nuevoPrecio > 0) {
+            inmueble.setPrecio(nuevoPrecio);
+            Alerta alertaPrecio = new Alerta(TipoAlerta.CAMBIO_PRECIO, inmueble, this);
+            INotificar canalCorreo = new NotificacionCorreo();
+            for (Oferta of : inmueble.getListaOfertas()) {
+                canalCorreo.enviarNotificacion(of.getComprador(), alertaPrecio);
+            }
+
+            System.out.println("Precio del inmueble " + inmueble.getCodigo() + " actualizado a $" + nuevoPrecio);
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -33,7 +33,7 @@ public abstract class Inmueble {
         this.ciudad=ciudad;
         this.area = area;
         this.precio = precio;
-        this.estado = estado;
+        this.estado = Estado.DISPONIBLE;
         this.vendedor=vendedor;
         this.listaOfertas=new ArrayList<>();
     }

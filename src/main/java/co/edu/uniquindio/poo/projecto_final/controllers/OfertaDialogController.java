@@ -67,7 +67,7 @@ public class OfertaDialogController {
                 mostrarMensaje("Oferta enviada al vendedor con éxito.", Alert.AlertType.INFORMATION);
 
             } else if (rolUsuario.equals("VENDEDOR")) {
-                ofertaActual.setValorContrapropuesta(precioIntroducido);
+                ofertaActual.setValorContrapropuesta((float)precioIntroducido);
                 ofertaActual.setEstadoOferta(EstadoOferta.EN_NEGOCIACION);
                 mostrarMensaje("Contrapropuesta enviada al comprador.", Alert.AlertType.INFORMATION);
             }
@@ -80,11 +80,16 @@ public class OfertaDialogController {
 
     @FXML
     private void onAceptarCambioClick() {
-        ofertaActual.setValorOferta((float) ofertaActual.getValorContrapropuesta());
-        ofertaActual.setEstadoOferta(EstadoOferta.PENDIENTE);
-        ofertaActual.setValorContrapropuesta(0);
-        mostrarMensaje("Has aceptado el precio del vendedor. La oferta ha sido enviada de vuelta al vendedor para que formalice y cierre la venta.", Alert.AlertType.INFORMATION);
-        cerrarVentana();
+        if (ofertaActual != null && rolUsuario.equals("COMPRADOR")) {
+            ofertaActual.setValorOferta((float) ofertaActual.getValorContrapropuesta());
+            ofertaActual.setEstadoOferta(EstadoOferta.ACEPTADA_POR_COMPRADOR);
+            mostrarMensaje("Has aceptado la contrapropuesta. Ahora el vendedor puede proceder al cierre de la transacción.", Alert.AlertType.INFORMATION);
+            if (callbackActualizar != null) {
+                callbackActualizar.run();
+            }
+            Stage stage = (Stage) btnAceptarCambio.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML

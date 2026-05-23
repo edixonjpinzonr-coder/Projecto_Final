@@ -18,4 +18,6 @@ public interface IOperacion {
     boolean registrarTransaccion(Oferta oferta, TipoOperacion tipoOperacion);
     List<Inmueble> buscarInmueblesConFiltro(Comprador comprador, String ciudad, TipoInmueble tipo, float precioMin, float precioMax, float areaMinima);
     List<Inmueble> recomendarInmuebles(Comprador comprador);
+    boolean rechazarOferta(Oferta oferta);
+    boolean actualizarPrecioInmueble(Inmueble inmueble, float nuevoPrecio);
 }
