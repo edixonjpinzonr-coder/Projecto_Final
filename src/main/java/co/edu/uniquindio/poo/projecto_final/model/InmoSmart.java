@@ -254,21 +254,45 @@ public class InmoSmart implements IOperacion {
     @Override
     public List<Inmueble> recomendarInmuebles(Comprador comprador) {
         List<Inmueble> recomendaciones = new ArrayList<>();
-        if (comprador== null || comprador.getListaHistorial().isEmpty()) {
+        if (comprador == null) {
             return recomendaciones;
         }
-        Historial ultimoGusto = comprador.getListaHistorial().get(comprador.getListaHistorial().size()-1);
+        Transaccion ultimaTransaccion = null;
+        for (int i = listaTransacciones.size() - 1; i >= 0; i--) {
+            Transaccion tr = listaTransacciones.get(i);
+            if (tr.getOferta() != null && tr.getOferta().getComprador() != null &&
+                    tr.getOferta().getComprador().getIdentificacion().equals(comprador.getIdentificacion())) {
+                ultimaTransaccion = tr;
+                break;
+            }
+        }
+        if (ultimaTransaccion == null || ultimaTransaccion.getOferta().getInmueble() == null) {
+            return recomendaciones;
+        }
+
+        Inmueble inmuebleComprado = ultimaTransaccion.getOferta().getInmueble();
+        String ciudadGusto = inmuebleComprado.getCiudad();
+        double precioGusto = inmuebleComprado.getPrecio();
+        double precioMinimo = precioGusto * 0.7;
+        double precioMaximo = precioGusto * 1.3;
+
         for (Inmueble inmueble : listaInmuebles) {
             if (inmueble.getEstado() == Estado.DISPONIBLE) {
-                boolean coincideCiudad= ultimoGusto.getCiudadBusqueda()==null ||
-                        inmueble.getCiudad().equalsIgnoreCase(ultimoGusto.getCiudadBusqueda());
-                boolean coincidePrecio= inmueble.getPrecio()>= ultimoGusto.getPrecioMinimo() &&
-                        inmueble.getPrecio() <= ultimoGusto.getPrecioMaximo();
-                if (coincideCiudad && coincidePrecio) {
+
+                boolean coincideCiudad = inmueble.getCiudad() != null &&
+                        inmueble.getCiudad().equalsIgnoreCase(ciudadGusto);
+
+                boolean coincidePrecio = inmueble.getPrecio() >= precioMinimo &&
+                        inmueble.getPrecio() <= precioMaximo;
+
+                boolean noEsElMismo = !inmueble.getCodigo().equals(inmuebleComprado.getCodigo());
+
+                if (coincideCiudad && coincidePrecio && noEsElMismo) {
                     recomendaciones.add(inmueble);
                 }
             }
         }
+
         return recomendaciones;
     }
 

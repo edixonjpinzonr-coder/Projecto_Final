@@ -87,12 +87,12 @@
             <Font name="Bell MT" size="18.0" />
          </font>
       </Label>
-      <Button layoutX="518.0" layoutY="576.0" mnemonicParsing="false" onAction="#onRechazarOfertaClick" text="Aceptar Oferta">
+      <Button layoutX="518.0" layoutY="576.0" mnemonicParsing="false" onAction="#onAceptarOfertaClick" text="Aceptar Oferta">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Button>
-      <Button layoutX="378.0" layoutY="576.0" mnemonicParsing="false" onAction="#onAceptarOfertaClick" text="Rechazar Oferta">
+      <Button layoutX="378.0" layoutY="576.0" mnemonicParsing="false" onAction="#onRechazarOfertaClick" text="Rechazar Oferta">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
@@ -100,6 +100,11 @@
       <Button layoutX="653.0" layoutY="576.0" mnemonicParsing="false" onAction="#onNegociarOfertaClick" text="Negociar">
          <font>
             <Font name="Bell MT" size="13.0" />
+         </font>
+      </Button>
+      <Button layoutX="103.0" layoutY="575.0" mnemonicParsing="false" onAction="#onVerHistorialClick" text="Ver Historial de Ventas">
+         <font>
+            <Font name="Bell MT" size="15.0" />
          </font>
       </Button>
    </children>

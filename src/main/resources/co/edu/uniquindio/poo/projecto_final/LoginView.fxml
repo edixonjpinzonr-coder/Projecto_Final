@@ -8,38 +8,38 @@
 
 <AnchorPane prefHeight="427.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.LoginController">
    <children>
-      <Label layoutX="108.0" layoutY="54.0" text="InmoSmart">
+      <Label layoutX="113.0" layoutY="35.0" text="InmoSmart">
          <font>
             <Font name="Bell MT" size="31.0" />
          </font>
       </Label>
-      <Label layoutX="127.0" layoutY="93.0" text="iniciar Sesion">
+      <Label layoutX="136.0" layoutY="85.0" text="iniciar Sesion">
          <font>
             <Font name="Bell MT" size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="txtIdentification" layoutX="44.0" layoutY="200.0" prefHeight="26.0" prefWidth="281.0" />
-      <Button layoutX="131.0" layoutY="250.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
+      <TextField fx:id="txtIdentification" layoutX="42.0" layoutY="187.0" prefHeight="26.0" prefWidth="281.0" />
+      <Button layoutX="136.0" layoutY="238.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
          <font>
             <Font name="Bell MT" size="20.0" />
          </font>
       </Button>
-      <Label layoutX="44.0" layoutY="157.0" text="Ingrese su Cedula:">
+      <Label layoutX="41.0" layoutY="148.0" text="Ingrese su Cedula:">
          <font>
             <Font name="Bell MT" size="19.0" />
          </font>
       </Label>
-      <Button layoutX="136.0" layoutY="365.0" mnemonicParsing="false" onAction="#onIrARegistroClick" text="Crear Cuenta">
+      <Button layoutX="141.0" layoutY="355.0" mnemonicParsing="false" onAction="#onIrARegistroClick" text="Crear Cuenta">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Button>
-      <Label layoutX="130.0" layoutY="320.0" text="¿No tienes cuenta?">
+      <Label layoutX="135.0" layoutY="311.0" text="¿No tienes cuenta?">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="138.0" layoutY="338.0" text="Registrate Aqui">
+      <Label layoutX="143.0" layoutY="329.0" text="Registrate Aqui">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>

@@ -1,10 +1,10 @@
 package co.edu.uniquindio.poo.projecto_final.controllers;
 
-import co.edu.uniquindio.poo.projecto_final.model.Comprador;
-import co.edu.uniquindio.poo.projecto_final.model.Inmueble;
-import co.edu.uniquindio.poo.projecto_final.model.Usuario;
+import co.edu.uniquindio.poo.projecto_final.model.*;
+import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
 import co.edu.uniquindio.poo.projecto_final.model.enums.TipoInmueble;
 import co.edu.uniquindio.poo.projecto_final.services.ModelFactoryService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,10 +36,14 @@ public class CompradorController {
     @FXML private TableColumn<Inmueble, Float> colSugArea;
     @FXML private TableColumn<Inmueble, Float> colSugPrecio;
 
-
+    @FXML private TableView<Inmueble> tablaInmuebles;
+    @FXML private TableView<Oferta> tablaMisOfertas;
+    @FXML private TableColumn<Oferta, String> colOfInmueble;
+    @FXML private TableColumn<Oferta, Double> colOfValorOriginal;
+    @FXML private TableColumn<Oferta, Double> colOfContrapropuesta;
+    @FXML private TableColumn<Oferta, String> colOfEstado;
 
     private Comprador compradorLogueado;
-
     @FXML
     private void initialize() {
         if (comboTipoInmueble != null) {
@@ -48,7 +52,7 @@ public class CompradorController {
         }
         if (colBusqCodigo != null) {
             colBusqCodigo.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("codigo"));
-            colBusqCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("Ciudad"));
+            colBusqCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("ciudad"));
             colBusqArea.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("area"));
             colBusqPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
 
@@ -56,12 +60,16 @@ public class CompradorController {
 
         if (colSugCodigo != null) {
             colSugCodigo.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("codigo"));
-            colSugCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("Ciudad"));
+            colSugCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("ciudad"));
             colSugArea.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("area"));
             colSugPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
 
+        }if (tablaMisOfertas != null) {
+            colOfInmueble.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInmueble().getCodigo()));
+            colOfValorOriginal.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("valorOferta"));
+            colOfContrapropuesta.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("valorContrapropuesta"));
+            colOfEstado.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("estadoOferta"));
         }
-
             Usuario usuarioClase = ModelFactoryService.getInstance().getInmoSmart().buscarUsuario("1234");
             if (usuarioClase instanceof Comprador) {
                 this.compradorLogueado = (Comprador) usuarioClase;
@@ -69,6 +77,7 @@ public class CompradorController {
 
         cargarInmueblesIniciales();
         cargarSugerencias();
+        actualizarTablaMisOfertas();
 
     }
 
@@ -102,6 +111,43 @@ public class CompradorController {
             mostrarMensaje("Error de formato Los precios y el área deben ser valores numéricos.", Alert.AlertType.ERROR);
         }
     }
+    @FXML
+    private void onRealizarOfertaClick() {
+        Inmueble seleccionado = tablaBusqueda.getSelectionModel().getSelectedItem();
+        if (seleccionado == null && tablaSugerencias != null) {
+            seleccionado = tablaSugerencias.getSelectionModel().getSelectedItem();
+        }
+        if (seleccionado == null) {
+            mostrarMensaje("Por favor, seleccione un inmueble de la tabla de búsqueda o de sugerencias para ofertar.", Alert.AlertType.WARNING);
+            return;
+        }
+        String idOferta = "OF-" + (ModelFactoryService.getInstance().getInmoSmart().getListaOfertas().size() + 1);
+        Oferta nueva = new Oferta(
+                idOferta,
+                compradorLogueado,
+                seleccionado,
+                0,
+                java.time.LocalDate.now(),
+                co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.PENDIENTE,
+                ModelFactoryService.getInstance().getInmoSmart()
+        );
+        abrirModalOferta(nueva, "COMPRADOR");
+    }
+
+    @FXML
+    private void onResponderNegociacionClick() {
+        Oferta seleccionada = tablaMisOfertas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarMensaje("Por favor, seleccione una oferta de su lista.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (seleccionada.getEstadoOferta() != co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION) {
+            mostrarMensaje("Solo puedes modificar ofertas que estén en estado 'EN_NEGOCIACION'.", Alert.AlertType.WARNING);
+            return;
+        }
+        abrirModalOferta(seleccionada, "COMPRADOR");
+    }
 
     @FXML
     private void onCerrarSesionClick() {
@@ -114,6 +160,42 @@ public class CompradorController {
             stage.show();
         } catch (IOException e) {
             mostrarMensaje("Error al regresar al Login", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void actualizarTablaMisOfertas() {
+        if (tablaMisOfertas != null && compradorLogueado != null) {
+            java.util.List<Oferta> todasLasOfertas = ModelFactoryService.getInstance().getInmoSmart().getListaOfertas();
+            java.util.List<Oferta> misOfertasPropias = new java.util.ArrayList<>();
+            for (Oferta of : todasLasOfertas) {
+                if (of.getComprador() != null &&
+                        of.getComprador().getIdentificacion().equals(compradorLogueado.getIdentificacion())) {
+                    if (of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.PENDIENTE ||
+                            of.getEstadoOferta() == co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.EN_NEGOCIACION) {
+
+                        misOfertasPropias.add(of);
+                    }
+                }
+            }
+            tablaMisOfertas.setItems(FXCollections.observableArrayList(misOfertasPropias));
+        }
+    }
+
+    private void abrirModalOferta(Oferta oferta, String rol) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/OfertaDialogView.fxml"));
+            Parent root = loader.load();
+
+            OfertaDialogController controller = loader.getController();
+            controller.inicializarDialogo(oferta, rol, compradorLogueado, () -> actualizarTablaMisOfertas());
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Negociación de Inmueble");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException e) {
+            mostrarMensaje("Error al abrir la interfaz de ofertas.", Alert.AlertType.ERROR);
         }
     }
 
@@ -132,11 +214,13 @@ public class CompradorController {
             List<Inmueble> recomendados = ModelFactoryService.getInstance().getInmoSmart().recomendarInmuebles(compradorLogueado);
 
             if (recomendados.isEmpty()) {
-                var todos = ModelFactoryService.getInstance().getInmoSmart().getListaInmuebles();
-                tablaSugerencias.setItems(javafx.collections.FXCollections.observableArrayList(todos));
-            } else {
-                tablaSugerencias.setItems(javafx.collections.FXCollections.observableArrayList(recomendados));
+                recomendados = ModelFactoryService.getInstance().getInmoSmart().getListaInmuebles();
+
             }
+            List<Inmueble> recomendadosDisponibles = recomendados.stream()
+                    .filter(inm -> inm.getEstado() == co.edu.uniquindio.poo.projecto_final.model.enums.Estado.DISPONIBLE)
+                    .toList();
+            tablaSugerencias.setItems(javafx.collections.FXCollections.observableArrayList(recomendadosDisponibles));
         }
     }
 
@@ -150,12 +234,31 @@ public class CompradorController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+    @FXML
+    private void onVerHistorialClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/HistorialView.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            HistorialController controller = loader.getController();
+            controller.inicializarHistorial(compradorLogueado);
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.setTitle("InmoSmart - Historial");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (java.io.IOException e) {
+            mostrarMensaje("Error al abrir el historial.", Alert.AlertType.ERROR);
+        }
+    }
 
     public void setCompradorLogueado(Comprador comprador) {
         this.compradorLogueado = comprador;
         this.lblBienvenida.setText("Bienvenido, " + comprador.getNombre());
         cargarInmueblesIniciales();
         cargarSugerencias();
+        actualizarTablaMisOfertas();
     }
 }
 

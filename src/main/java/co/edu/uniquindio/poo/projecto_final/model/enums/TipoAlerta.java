@@ -4,5 +4,6 @@ public enum TipoAlerta {
 
     OFERTA_ACEPTADA,
     CAMBIO_PRECIO,
+    OFERTA_RECHAZADA,
     RECOMENDACION;
 }
