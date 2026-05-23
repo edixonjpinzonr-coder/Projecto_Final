@@ -6,8 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="361.0" prefWidth="358.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.LoginController">
+<AnchorPane prefHeight="427.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.LoginController">
    <children>
       <Label layoutX="108.0" layoutY="54.0" text="InmoSmart">
          <font>
@@ -19,15 +18,30 @@
             <Font name="Bell MT" size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="txtIdentification" layoutX="40.0" layoutY="198.0" prefHeight="26.0" prefWidth="281.0" />
-      <Button layoutX="130.0" layoutY="252.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
+      <TextField fx:id="txtIdentification" layoutX="44.0" layoutY="200.0" prefHeight="26.0" prefWidth="281.0" />
+      <Button layoutX="131.0" layoutY="250.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
          <font>
             <Font name="Bell MT" size="20.0" />
          </font>
       </Button>
-      <Label layoutX="36.0" layoutY="158.0" text="Ingrese su Cedula:">
+      <Label layoutX="44.0" layoutY="157.0" text="Ingrese su Cedula:">
          <font>
             <Font name="Bell MT" size="19.0" />
+         </font>
+      </Label>
+      <Button layoutX="136.0" layoutY="365.0" mnemonicParsing="false" onAction="#onIrARegistroClick" text="Crear Cuenta">
+         <font>
+            <Font name="Bell MT" size="13.0" />
+         </font>
+      </Button>
+      <Label layoutX="130.0" layoutY="320.0" text="¿No tienes cuenta?">
+         <font>
+            <Font name="Bell MT" size="13.0" />
+         </font>
+      </Label>
+      <Label layoutX="138.0" layoutY="338.0" text="Registrate Aqui">
+         <font>
+            <Font name="Bell MT" size="13.0" />
          </font>
       </Label>
    </children>

@@ -12,8 +12,8 @@ public class Apartamento extends Inmueble{
         this.numHabitaciones= numHabitaciones;
     }
 
-    public Apartamento(String codigo, String direccion, float area, float precio) {
-        super(codigo, direccion, area, precio);
+    public Apartamento(String codigo,String direccion, String ciudad, float area, float precio){
+        super(codigo, direccion, ciudad, area, precio);
         this.numHabitaciones = numHabitaciones;
     }
 

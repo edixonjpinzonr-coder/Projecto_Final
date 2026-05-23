@@ -27,7 +27,7 @@ public abstract class Inmueble {
         this.vendedor=vendedor;
         this.listaOfertas=new ArrayList<>();
     }
-    public Inmueble(String codigo, String direccion, float area, float precio){
+    public Inmueble(String codigo, String direccion, String ciudad, float area, float precio){
         this.codigo = codigo;
         this.direccion = direccion;
         this.ciudad=ciudad;
@@ -87,6 +87,10 @@ public abstract class Inmueble {
     }
 
     public Vendedor getVendedor() {return vendedor;}
+
+    public void setVendedor(Vendedor vendedor) {
+        this.vendedor = vendedor;
+    }
 
     public List<Oferta> getListaOfertas() {return listaOfertas;}
 

@@ -24,8 +24,8 @@ public class ModelFactoryService {
         return inmoSmart;
     }
     public  void inicializarDatosPrueba(){
-        Comprador juanito= new Comprador("juan", "12345","315","juan@gmail.com");
-        Vendedor pepito= new Vendedor("pepito", "11111", "314","pepito@gmail.com");
+        Comprador juanito= new Comprador("juan", "1234","315","juan@gmail.com");
+        Vendedor pepito= new Vendedor("pepito", "4321", "314","pepito@gmail.com");
 
         inmoSmart.registrarUsuario(juanito);
         inmoSmart.registrarUsuario(pepito);

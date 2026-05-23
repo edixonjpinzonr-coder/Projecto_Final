@@ -9,6 +9,7 @@ public class Oferta {
     private Inmueble inmueble;
     private float valorOferta;
     private LocalDate fechaoferta;
+    private double valorContrapropuesta;
     private EstadoOferta estadoOferta;
     private InmoSmart ownedByInmoSmart;
 
@@ -19,6 +20,7 @@ public class Oferta {
         this.inmueble = inmueble;
         this.valorOferta = valorOferta;
         this.fechaoferta = fechaoferta;
+        this.valorContrapropuesta = valorContrapropuesta;
         this.estadoOferta = estadoOferta;
         this.ownedByInmoSmart = ownedByInmoSmart;
     }
@@ -37,6 +39,12 @@ public class Oferta {
 
     public LocalDate getFechaoferta() { return fechaoferta; }
     public void setFechaoferta(LocalDate fechaoferta) { this.fechaoferta = fechaoferta; }
+
+    public double getValorContrapropuesta() { return valorContrapropuesta; }
+
+    public void setValorContrapropuesta(double valorContrapropuesta) {
+        this.valorContrapropuesta = valorContrapropuesta;
+    }
 
     public EstadoOferta getEstadoOferta() { return estadoOferta; }
     public void setEstadoOferta(EstadoOferta estadoOferta) { this.estadoOferta = estadoOferta; }

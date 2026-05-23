@@ -11,8 +11,8 @@ public class Casa extends Inmueble{
         super(codigo, direccion, ciudad, area, precio, estado, vendedor);
         this.numPisos= numPisos;
     }
-    public Casa(String codigo,String direccion, float area, float precio){
-        super(codigo, direccion, area, precio);
+    public Casa(String codigo,String direccion, String ciudad, float area, float precio){
+        super(codigo, direccion, ciudad, area, precio);
         this.numPisos= numPisos;
     }
 

@@ -10,10 +10,15 @@ import java.io.IOException;
 public class InmoSmartApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(InmoSmartApp.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
+                "/co/edu/uniquindio/poo/projecto_final/LoginView.fxml"));
+
+        Scene scene = new Scene(fxmlLoader.load(), 450, 450);
+
+        stage.setTitle("InmoSmart - Iniciar Sesión");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 }

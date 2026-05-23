@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="646.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.CompradorController">
    <children>
       <Label fx:id="lblBienvenida" layoutX="255.0" layoutY="14.0" text="Bienvenido Comprador">
@@ -64,18 +63,18 @@
       </Label>
       <TableView fx:id="tablaBusqueda" layoutX="371.0" layoutY="141.0" prefHeight="200.0" prefWidth="297.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Código" />
-          <TableColumn prefWidth="75.0" text="Dirección" />
-            <TableColumn prefWidth="75.0" text="Area (m²)" />
-            <TableColumn prefWidth="75.0" text="Precio" />
+          <TableColumn fx:id="colBusqCodigo" prefWidth="75.0" text="Código" />
+          <TableColumn fx:id="colBusqCiudad" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="colBusqArea" prefWidth="75.0" text="Área (m²)" />
+            <TableColumn fx:id="colBusqPrecio" prefWidth="75.0" text="Precio" />
         </columns>
       </TableView>
       <TableView fx:id="tablaSugerencias" layoutX="370.0" layoutY="410.0" prefHeight="200.0" prefWidth="298.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Código" />
-          <TableColumn prefWidth="75.0" text="Dirección" />
-            <TableColumn prefWidth="75.0" text="Area (m²)" />
-            <TableColumn prefWidth="75.0" text="Column X" />
+          <TableColumn fx:id="colSugCodigo" prefWidth="75.0" text="Código" />
+          <TableColumn fx:id="colSugCiudad" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="colSugArea" prefWidth="75.0" text="Área (m²)" />
+            <TableColumn fx:id="colSugPrecio" prefWidth="75.0" text="Precio" />
         </columns>
       </TableView>
       <Label layoutX="371.0" layoutY="375.0" text="Sugerencias para ti:">
@@ -83,5 +82,10 @@
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
+      <Button layoutX="17.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCerrarSesionClick" text="&lt;- Regresar">
+         <font>
+            <Font name="Bell MT" size="10.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

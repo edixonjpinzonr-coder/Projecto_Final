@@ -145,13 +145,12 @@ public class InmoSmart implements IOperacion {
     public boolean publicarInmueble(Inmueble inmueble) {
         boolean bandera = false;
         Inmueble inmueble1 = buscarinmueble(inmueble.getCodigo());
-
         if(inmueble1 == null){
             listaInmuebles.add(inmueble);
             if (inmueble.getVendedor() != null) {
                 inmueble.getVendedor().sumarPuntosReputacion("1");
+                inmueble.getVendedor().getListaInmuebles().add(inmueble);
             }
-
             bandera = true;
         }
         return bandera;

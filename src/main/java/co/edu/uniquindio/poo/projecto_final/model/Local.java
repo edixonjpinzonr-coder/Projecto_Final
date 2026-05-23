@@ -12,8 +12,8 @@ public class Local extends Inmueble{
         this.numEntradas= numEntradas;
     }
 
-    public Local(String codigo, String direccion, float area, float precio) {
-        super(codigo, direccion, area, precio);
+    public Local(String codigo,String direccion, String ciudad, float area, float precio){
+        super(codigo, direccion, ciudad, area, precio);
         this.numEntradas = numEntradas;
     }
 

@@ -9,14 +9,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="610.0" prefWidth="488.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.VendedorController">
+<AnchorPane prefHeight="659.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.VendedorController">
    <children>
       <TextField fx:id="txtCodigo" layoutX="36.0" layoutY="147.0" prefHeight="26.0" prefWidth="150.0" />
-      <TextField fx:id="txtArea" layoutX="306.0" layoutY="147.0" />
-      <TextField fx:id="txtDireccion" layoutX="36.0" layoutY="208.0" prefHeight="26.0" prefWidth="150.0" />
-      <TextField fx:id="txtPrecio" layoutX="306.0" layoutY="208.0" />
-      <Label fx:id="lblBienvenida" layoutX="162.0" layoutY="23.0" text="Bienvenido Usuario">
+      <TextField fx:id="txtArea" layoutX="36.0" layoutY="279.0" />
+      <TextField fx:id="txtCiudad" layoutX="36.0" layoutY="208.0" prefHeight="26.0" prefWidth="150.0" />
+      <TextField fx:id="txtPrecio" layoutX="36.0" layoutY="344.0" />
+      <Label fx:id="lblBienvenida" layoutX="285.0" layoutY="23.0" text="Bienvenido Usuario">
          <font>
             <Font name="Bell MT" size="20.0" />
          </font>
@@ -31,44 +30,77 @@
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="37.0" layoutY="186.0" text="Dirección">
+      <Label layoutX="37.0" layoutY="186.0" text="Ciudad">
          <font>
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="306.0" layoutY="120.0" text="Área">
+      <Label layoutX="36.0" layoutY="251.0" text="Área">
          <font>
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="306.0" layoutY="186.0" text="Precio">
+      <Label layoutX="39.0" layoutY="321.0" text="Precio">
          <font>
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <ComboBox fx:id="comboTipoInmueble" layoutX="35.0" layoutY="279.0" prefHeight="26.0" prefWidth="162.0" />
-      <Label layoutX="35.0" layoutY="250.0" text="Tipo ">
+      <ComboBox fx:id="comboTipoInmueble" layoutX="37.0" layoutY="418.0" prefHeight="26.0" prefWidth="162.0" />
+      <Label layoutX="34.0" layoutY="388.0" text="Tipo ">
          <font>
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <Button layoutX="173.0" layoutY="330.0" mnemonicParsing="false" onAction="#onPublicarButtonClick" text="Publicar Inmueble">
+      <Button layoutX="114.0" layoutY="501.0" mnemonicParsing="false" onAction="#onPublicarButtonClick" text="Publicar Inmueble">
          <font>
             <Font name="Bell MT" size="16.0" />
          </font>
       </Button>
-      <TableView fx:id="tablaInmuebles" layoutY="436.0" prefHeight="174.0" prefWidth="492.0">
+      <TableView fx:id="tablaInmuebles" layoutX="378.0" layoutY="117.0" prefHeight="174.0" prefWidth="354.0">
         <columns>
-          <TableColumn fx:id="colCodigo" prefWidth="101.60003507137299" text="Codigo" />
-          <TableColumn fx:id="colDireccion" prefWidth="153.59998321533203" text="Direccion" />
-            <TableColumn fx:id="colArea" prefWidth="94.4000244140625" text="Area (m²)" />
-            <TableColumn fx:id="colPrecio" prefWidth="143.20001220703125" text="Precio" />
+          <TableColumn fx:id="colCodigo" prefWidth="78.4000244140625" text="Codigo" />
+          <TableColumn fx:id="colCiudad" prefWidth="98.4000244140625" text="Ciudad" />
+            <TableColumn fx:id="colArea" prefWidth="72.7999267578125" text="Area (m²)" />
+            <TableColumn fx:id="colPrecio" prefWidth="104.800048828125" text="Precio" />
         </columns>
       </TableView>
-      <Label layoutX="35.0" layoutY="393.0" text="Inmuebles Publicados:">
+      <Label layoutX="378.0" layoutY="81.0" text="Inmuebles Publicados:">
          <font>
             <Font name="Bell MT" size="18.0" />
          </font>
       </Label>
+      <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#onCerrarSesionClick" text="&lt;- Regresar">
+         <font>
+            <Font name="Bell MT" size="10.0" />
+         </font>
+      </Button>
+      <TableView fx:id="tablaOfertas" layoutX="378.0" layoutY="351.0" prefHeight="200.0" prefWidth="354.0">
+        <columns>
+          <TableColumn fx:id="colOfInmueble" prefWidth="75.0" text="Inmueble" />
+          <TableColumn fx:id="colOfComprador" prefWidth="84.80001831054688" text="Comprador" />
+            <TableColumn fx:id="colOfValor" prefWidth="97.59991455078125" text="Valor Ofertado" />
+            <TableColumn fx:id="colOfEstado" prefWidth="97.60009765625" text="Estado" />
+        </columns>
+      </TableView>
+      <Label layoutX="378.0" layoutY="310.0" text="Centro de Notificacioness">
+         <font>
+            <Font name="Bell MT" size="18.0" />
+         </font>
+      </Label>
+      <Button layoutX="518.0" layoutY="576.0" mnemonicParsing="false" onAction="#onRechazarOfertaClick" text="Aceptar Oferta">
+         <font>
+            <Font name="Bell MT" size="13.0" />
+         </font>
+      </Button>
+      <Button layoutX="378.0" layoutY="576.0" mnemonicParsing="false" onAction="#onAceptarOfertaClick" text="Rechazar Oferta">
+         <font>
+            <Font name="Bell MT" size="13.0" />
+         </font>
+      </Button>
+      <Button layoutX="653.0" layoutY="576.0" mnemonicParsing="false" onAction="#onNegociarOfertaClick" text="Negociar">
+         <font>
+            <Font name="Bell MT" size="13.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
