@@ -1,6 +1,8 @@
 package co.edu.uniquindio.poo.projecto_final.model;
 
 import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
+import co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion;
+
 import java.time.LocalDate;
 
 public class Oferta {
@@ -11,6 +13,7 @@ public class Oferta {
     private LocalDate fechaoferta;
     private double valorContrapropuesta;
     private EstadoOferta estadoOferta;
+    private TipoOperacion tipoOperacion;
     private InmoSmart ownedByInmoSmart;
 
     public Oferta(String codigo, Comprador comprador, Inmueble inmueble, float valorOferta,
@@ -21,9 +24,13 @@ public class Oferta {
         this.valorOferta = valorOferta;
         this.fechaoferta = fechaoferta;
         this.valorContrapropuesta = 0;
+        this.tipoOperacion = tipoOperacion;
         this.estadoOferta = estadoOferta;
         this.ownedByInmoSmart = ownedByInmoSmart;
     }
+
+    public TipoOperacion getTipoOperacion() { return tipoOperacion; }
+    public void setTipoOperacion(TipoOperacion tipoTransaccion) { this.tipoOperacion = tipoTransaccion; }
 
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }

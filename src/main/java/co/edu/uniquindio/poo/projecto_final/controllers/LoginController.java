@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -82,6 +83,25 @@ public class LoginController {
         }catch (IOException e) {
             mostrarMensaje("Error al abrir la interfaz de Vendedor: " + e.getMessage(), Alert.AlertType.ERROR);
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onVerReportesClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/ReportesView.fxml"));
+            Parent root = loader.load();
+            ReportesController controller = loader.getController();
+            controller.inicializarReportes();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Reportes InmoSmart");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
         }
     }
 

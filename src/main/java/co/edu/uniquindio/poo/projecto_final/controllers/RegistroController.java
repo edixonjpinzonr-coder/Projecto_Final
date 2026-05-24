@@ -112,9 +112,13 @@ public class RegistroController {
         }
     }
 
-    private void mostrarMensaje(String mensaje, Alert.AlertType tipo) {
+    public void mostrarMensaje(String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
+        alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+        alerta.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+        alerta.getDialogPane().setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+
         alerta.showAndWait();
     }
 }

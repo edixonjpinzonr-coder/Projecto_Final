@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InmoSmart implements IOperacion {
     private String nombre;
@@ -258,9 +259,7 @@ public class InmoSmart implements IOperacion {
     @Override
     public List<Inmueble> recomendarInmuebles(Comprador comprador) {
         List<Inmueble> recomendaciones = new ArrayList<>();
-        if (comprador == null) {
-            return recomendaciones;
-        }
+        if (comprador == null) return recomendaciones;
         Transaccion ultimaTransaccion = null;
         for (int i = listaTransacciones.size() - 1; i >= 0; i--) {
             Transaccion tr = listaTransacciones.get(i);
@@ -270,35 +269,40 @@ public class InmoSmart implements IOperacion {
                 break;
             }
         }
-        if (ultimaTransaccion == null || ultimaTransaccion.getOferta().getInmueble() == null) {
-            return recomendaciones;
-        }
-
-        Inmueble inmuebleComprado = ultimaTransaccion.getOferta().getInmueble();
-        String ciudadGusto = inmuebleComprado.getCiudad();
-        double precioGusto = inmuebleComprado.getPrecio();
-        double precioMinimo = precioGusto * 0.7;
-        double precioMaximo = precioGusto * 1.3;
-
         for (Inmueble inmueble : listaInmuebles) {
+
             if (inmueble.getEstado() == Estado.DISPONIBLE) {
+                boolean coincideConHistorial = false;
 
-                boolean coincideCiudad = inmueble.getCiudad() != null &&
-                        inmueble.getCiudad().equalsIgnoreCase(ciudadGusto);
+                if (ultimaTransaccion != null && ultimaTransaccion.getOferta().getInmueble() != null) {
+                    Inmueble comprado = ultimaTransaccion.getOferta().getInmueble();
+                    boolean coincideCiudad = inmueble.getCiudad().equalsIgnoreCase(comprado.getCiudad());
+                    boolean coincidePrecio = inmueble.getPrecio() >= (comprado.getPrecio() * 0.7) &&
+                            inmueble.getPrecio() <= (comprado.getPrecio() * 1.3);
+                    coincideConHistorial = coincideCiudad && coincidePrecio && !inmueble.getCodigo().equals(comprado.getCodigo());
+                }
+                boolean coincideBusqueda = false;
+                boolean coincideCiudadBusqueda = (comprador.getUltimaCiudadBuscada() != null && !comprador.getUltimaCiudadBuscada().isEmpty())
+                        && inmueble.getCiudad().equalsIgnoreCase(comprador.getUltimaCiudadBuscada());
+                boolean coincideTipoBusqueda = false;
 
-                boolean coincidePrecio = inmueble.getPrecio() >= precioMinimo &&
-                        inmueble.getPrecio() <= precioMaximo;
+                if (comprador.getUltimoTipoBuscadoStr() != null && !comprador.getUltimoTipoBuscadoStr().equals("Todos")) {
+                    String tipo = comprador.getUltimoTipoBuscadoStr();
+                    if (tipo.equals("Casa") && inmueble instanceof Casa) coincideTipoBusqueda = true;
+                    else if (tipo.equals("Apartamento") && inmueble instanceof Apartamento) coincideTipoBusqueda = true;
+                    else if (tipo.equals("Local") && inmueble instanceof Local) coincideTipoBusqueda = true;
+                    else if (tipo.equals("Terreno") && inmueble instanceof Terreno) coincideTipoBusqueda = true;
+                }
+                coincideBusqueda = coincideCiudadBusqueda || coincideTipoBusqueda;
 
-                boolean noEsElMismo = !inmueble.getCodigo().equals(inmuebleComprado.getCodigo());
-
-                if (coincideCiudad && coincidePrecio && noEsElMismo) {
+                if ((coincideConHistorial || coincideBusqueda) && !recomendaciones.contains(inmueble)) {
                     recomendaciones.add(inmueble);
                 }
             }
         }
-
         return recomendaciones;
     }
+
     @Override
     public boolean rechazarOferta(Oferta oferta) {
             if (oferta != null && oferta.getEstadoOferta() == EstadoOferta.PENDIENTE) {
@@ -388,4 +392,49 @@ public class InmoSmart implements IOperacion {
             System.out.println("Vendedor con más propiedades: " +mejorVendedor.getNombre() + " (" + maxPropiedades + " propiedades)\n");
         }
     }
+
+    public int calcularTotalInmuebles() {
+        return listaInmuebles.size();
+    }
+
+    public int calcularTotalCompradores() {
+        return (int) listaUsuarios.stream().filter(u -> u instanceof Comprador).count();
+    }
+
+
+    public int calcularTotalVendedores() {
+        return (int) listaUsuarios.stream().filter(u -> u instanceof Vendedor).count();
+    }
+
+    public String obtenerTipoInmuebleMasVendido() {
+        return listaTransacciones.stream()
+                .map(t -> t.getOferta().getInmueble().getClass().getSimpleName()) // Obtiene "Casa", "Apartamento", etc.
+                .collect(Collectors.groupingBy(tipo -> tipo, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(e -> e.getKey() + " (" + e.getValue() + " ventas)").orElse("Sin ventas");
+    }
+
+    public String obtenerCiudadMasDemandada() {
+        return listaInmuebles.stream()
+                .collect(Collectors.groupingBy(Inmueble::getCiudad, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("N/A");
+    }
+
+    public String obtenerCompradorMasActivo() {
+        return listaOfertas.stream()
+                .collect(Collectors.groupingBy(o -> o.getComprador().getNombre(), Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("N/A");
+    }
+
+
+    public String obtenerVendedorConMasPropiedades() {
+        return listaInmuebles.stream()
+                .filter(i -> i.getVendedor() != null)
+                .collect(Collectors.groupingBy(i -> i.getVendedor().getNombre(), Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("N/A");
+    }
+
 }

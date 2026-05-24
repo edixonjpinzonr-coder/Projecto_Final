@@ -11,8 +11,7 @@ public class Alerta {
 
     private InmoSmart ownedByInmoSmart;
 
-    public Alerta(TipoAlerta tipoAlerta,
-                  Inmueble inmuebleAsociado, InmoSmart ownedByInmoSmart) {
+    public Alerta(TipoAlerta tipoAlerta, Inmueble inmuebleAsociado, InmoSmart ownedByInmoSmart) {
         this.tipoAlerta = tipoAlerta;
         this.fecha = LocalDate.now();
         this.inmuebleAsociado = inmuebleAsociado;

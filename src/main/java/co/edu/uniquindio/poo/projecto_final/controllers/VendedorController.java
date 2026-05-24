@@ -3,6 +3,7 @@ package co.edu.uniquindio.poo.projecto_final.controllers;
 import co.edu.uniquindio.poo.projecto_final.model.*;
 import co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta;
 import co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta;
+import co.edu.uniquindio.poo.projecto_final.services.INotificar;
 import co.edu.uniquindio.poo.projecto_final.services.ModelFactoryService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 public class VendedorController {
-
     @FXML private TextField txtCodigo;
     @FXML private TextField txtCiudad;
     @FXML private TextField txtArea;
@@ -41,6 +41,9 @@ public class VendedorController {
     @FXML private Label lblRango;
 
     private Vendedor vendedorLogueado;
+    INotificar notificadorWhatsApp = new NotificacionWhatsApp();
+    INotificar notificadorSMS = new NotificacionSMS();
+    INotificar notificadorCorreo= new  NotificacionCorreo();
 
     @FXML
     private void initialize() {
@@ -86,6 +89,24 @@ public class VendedorController {
             btnAceptarOferta.setDisable(true);
         }
         actualizarDatosPerfil();
+
+        javafx.application.Platform.runLater(() -> {
+            if (vendedorLogueado != null) {
+                if (!vendedorLogueado.getListaAlertas().isEmpty()) {
+                    StringBuilder mensajeAcumulado = new StringBuilder("Novedades en tus Publicaciones\n\n");
+                    for (Alerta alerta : vendedorLogueado.getListaAlertas()) {
+                        mensajeAcumulado.append("• Acción: ").append(alerta.getTipoAlerta())
+                                .append("\n  Inmueble afectado: ").append(alerta.getInmuebleAsociado().getCodigo())
+                                .append("\n  Fecha: ").append(alerta.getFecha()).append("\n\n");
+                    }
+                    mostrarMensaje(mensajeAcumulado.toString(), Alert.AlertType.INFORMATION);
+                    vendedorLogueado.getListaAlertas().clear();
+                }
+                else {
+                    mostrarMensaje(" BIENVENIDO A INMOSMART \n\n¡Hola, " + vendedorLogueado.getNombre() + "! No tienes nuevas ofertas por revisar por el momento.", Alert.AlertType.INFORMATION);
+                }
+            }
+        });
     }
 
     @FXML
@@ -137,7 +158,6 @@ public class VendedorController {
             mostrarMensaje("Error de datos: El precio y el área deben ser números.", Alert.AlertType.ERROR);
         }
     }
-
     @FXML
     private void onAceptarOfertaClick() {
         Oferta seleccionada = tablaOfertas.getSelectionModel().getSelectedItem();
@@ -145,47 +165,30 @@ public class VendedorController {
             mostrarMensaje("Por favor, seleccione una oferta de la tabla.", Alert.AlertType.WARNING);
             return;
         }
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Tipo de Transacción");
-        confirmacion.setHeaderText("Cierre de Negocio: " + seleccionada.getInmueble().getCodigo());
-        confirmacion.setContentText("¿Esta transacción se consolidará como una Venta o un Arriendo?");
+        co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion tipo = seleccionada.getTipoOperacion();
+        if (tipo == null) {
+            mostrarMensaje("Error: Esta oferta no tiene definido el tipo de operación (Venta/Arriendo).", Alert.AlertType.ERROR);
+            return;
+        }
+        boolean exitoTr = ModelFactoryService.getInstance().getInmoSmart().registrarTransaccion(seleccionada, tipo);
+        if (exitoTr) {
+            Comprador comprador = seleccionada.getComprador();
+            Alerta alerta = new Alerta(
+                    co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_ACEPTADA,
+                    seleccionada.getInmueble(),ModelFactoryService.getInstance().getInmoSmart());
+            notificadorWhatsApp.enviarNotificacion(comprador, alerta);
+            comprador.agregarAlerta(alerta);
 
-        ButtonType btnVenta = new ButtonType("Venta");
-        ButtonType btnArriendo = new ButtonType("Arriendo");
-        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        confirmacion.getButtonTypes().setAll(btnVenta, btnArriendo, btnCancelar);
-
-        confirmacion.showAndWait().ifPresent(response -> {
-            if (response == btnCancelar) {
-                return;
-            }
-            co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion tipo;
-            if (response == btnVenta) {
-                tipo = co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion.VENTA;
-                seleccionada.getInmueble().setEstado(co.edu.uniquindio.poo.projecto_final.model.enums.Estado.VENDIDO);
-
-            } else {
-                tipo = co.edu.uniquindio.poo.projecto_final.model.enums.TipoOperacion.ARRIENDO;
-                seleccionada.getInmueble().setEstado(co.edu.uniquindio.poo.projecto_final.model.enums.Estado.ARRENDADO);
-
-            }
-            seleccionada.setEstadoOferta(co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.ACEPTADA);
-            boolean exitoTr = ModelFactoryService.getInstance().getInmoSmart().registrarTransaccion(
-                    seleccionada,
-                    tipo
-            );
-
-            if (exitoTr) {
-                mostrarMensaje("¡Éxito! Oferta aceptada y transacción de " + tipo + " generada exitosamente.", Alert.AlertType.INFORMATION);
-                simularNotificaciones(seleccionada.getComprador(), co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_ACEPTADA, seleccionada.getInmueble());
-                actualizarTabla();
-                actualizarTablaOfertas();
-                actualizarDatosPerfil();
-            } else {
-                mostrarMensaje("Error al procesar la transacción en la base de datos.", Alert.AlertType.ERROR);
-            }
-        });
+            mostrarMensaje("¡Éxito! Oferta aceptada y transacción de " + tipo + " generada exitosamente.", Alert.AlertType.INFORMATION);
+            simularNotificaciones(seleccionada.getComprador(),
+                    co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_ACEPTADA,
+                    seleccionada.getInmueble());
+            actualizarTabla();
+            actualizarTablaOfertas();
+            actualizarDatosPerfil();
+        } else {
+            mostrarMensaje("Error al procesar la transacción en la base de datos.", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -197,7 +200,14 @@ public class VendedorController {
         }
         seleccionada.setEstadoOferta(co.edu.uniquindio.poo.projecto_final.model.enums.EstadoOferta.RECHAZADA);
         mostrarMensaje("La oferta ha sido rechazada.", Alert.AlertType.INFORMATION);
-
+        Comprador comprador = seleccionada.getComprador();
+        Alerta alerta = new Alerta(
+                co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_RECHAZADA,
+                seleccionada.getInmueble(),
+                ModelFactoryService.getInstance().getInmoSmart()
+        );
+        notificadorSMS.enviarNotificacion(comprador, alerta);
+        comprador.agregarAlerta(alerta);
         String mensajeNotif = "Lo sentimos. Tu oferta para el inmueble " + seleccionada.getInmueble().getCodigo() + " ha sido RECHAZADA por el vendedor.";
         simularNotificaciones(seleccionada.getComprador(), co.edu.uniquindio.poo.projecto_final.model.enums.TipoAlerta.OFERTA_RECHAZADA, seleccionada.getInmueble());
 
@@ -229,6 +239,7 @@ public class VendedorController {
                         mostrarMensaje("Error: El precio debe ser un valor mayor a cero.", Alert.AlertType.ERROR);
                         return;
                     }
+
                     boolean exito = ModelFactoryService.getInstance().getInmoSmart()
                             .actualizarPrecioInmueble(inmuebleSeleccionado, nuevoPrecio);
                     if (exito) {
@@ -325,6 +336,9 @@ public class VendedorController {
         Alert alerta = new Alert(tipo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+        alerta.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+        alerta.getDialogPane().setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+
         alerta.showAndWait();
     }
 

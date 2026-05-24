@@ -81,7 +81,23 @@ public class CompradorController {
         cargarSugerencias();
         actualizarTablaMisOfertas();
         actualizarDatosPerfil();
-        actualizarDatosPerfil();
+
+        javafx.application.Platform.runLater(() -> {
+            if (compradorLogueado != null) {
+                if (!compradorLogueado.getListaAlertas().isEmpty()) {
+                    StringBuilder mensajeAcumulado = new StringBuilder("🔔 ¡Tienes una nueva Notificacion! \n\n");
+                    for (Alerta alerta : compradorLogueado.getListaAlertas()) {
+                        mensajeAcumulado.append("• ").append(alerta.getTipoAlerta())
+                                .append("\n  Inmueble: ").append(alerta.getInmuebleAsociado().getCodigo())
+                                .append("\n  Fecha: ").append(alerta.getFecha()).append("\n\n");
+                    }
+                    mostrarMensaje(mensajeAcumulado.toString(), Alert.AlertType.INFORMATION);
+                    compradorLogueado.getListaAlertas().clear();
+                } else {
+                    mostrarMensaje(" BIENVENIDO A INMOSMART \n\n¡Hola, " + compradorLogueado.getNombre() + "! No tienes novedades en tus ofertas por el momento.", Alert.AlertType.INFORMATION);
+                }
+            }
+        });
 
     }
 
@@ -89,32 +105,39 @@ public class CompradorController {
     public void onBuscarButtonClick() {
         try {
             String ciudad = txtFiltroCiudad.getText();
+            String seleccionTipo = comboTipoInmueble.getValue();
 
             float precioMin = txtPrecioMin.getText().isEmpty()? 0 :Float.parseFloat(txtPrecioMin.getText());
             float precioMax = txtPrecioMax.getText().isEmpty()? Float.MAX_VALUE: Float.parseFloat(txtPrecioMax.getText());
             float areaMinima = txtAreaMinima.getText().isEmpty()? 0 :Float.parseFloat(txtAreaMinima.getText());
-            String seleccionTipo = comboTipoInmueble.getValue();
-            TipoInmueble tipoEnum = null;
 
-            if (!"Todos".equals(seleccionTipo)) {
+            TipoInmueble tipoEnum = null;
+            if (seleccionTipo != null && !"Todos".equals(seleccionTipo)) {
                 tipoEnum = TipoInmueble.valueOf(seleccionTipo.toUpperCase());
+            }
+            if (compradorLogueado != null) {
+                compradorLogueado.setUltimaCiudadBuscada(ciudad);
+                compradorLogueado.setUltimoTipoBuscado(tipoEnum);
+                compradorLogueado.setUltimoTipoBuscadoStr(seleccionTipo);
             }
             List<Inmueble> resultados = ModelFactoryService.getInstance().getInmoSmart()
                     .buscarInmueblesConFiltro(compradorLogueado, ciudad, tipoEnum, precioMin, precioMax, areaMinima);
 
             if (resultados.isEmpty()) {
-                tablaBusqueda.setItems(javafx.collections.FXCollections.observableArrayList());
-                mostrarMensaje("Sin resultados No se encontraron inmuebles que cumplan con esos filtros.", Alert.AlertType.INFORMATION);
+                tablaBusqueda.setItems(FXCollections.observableArrayList());
+                mostrarMensaje("Sin resultados: No se encontraron inmuebles que cumplan con esos filtros.", Alert.AlertType.INFORMATION);
             } else {
-                tablaBusqueda.setItems(javafx.collections.FXCollections.observableArrayList(resultados));
-                mostrarMensaje("Búsqueda exitosa Se encontraron " +resultados.size()+ " inmuebles.", Alert.AlertType.INFORMATION);
+                tablaBusqueda.setItems(FXCollections.observableArrayList(resultados));
+                mostrarMensaje("Búsqueda exitosa: Se encontraron " + resultados.size() + " inmuebles.", Alert.AlertType.INFORMATION);
             }
             cargarSugerencias();
-
         } catch (NumberFormatException e) {
-            mostrarMensaje("Error de formato Los precios y el área deben ser valores numéricos.", Alert.AlertType.ERROR);
+            mostrarMensaje("Error de formato: Los precios y el área deben ser valores numéricos.", Alert.AlertType.ERROR);
+        } catch (IllegalArgumentException e) {
+            mostrarMensaje("Error: Tipo de inmueble no reconocido.", Alert.AlertType.ERROR);
         }
     }
+
     @FXML
     private void onRealizarOfertaClick() {
         Inmueble seleccionado = tablaBusqueda.getSelectionModel().getSelectedItem();
@@ -246,6 +269,9 @@ public class CompradorController {
         Alert alerta = new Alert(tipo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+        alerta.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+        alerta.getDialogPane().setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+
         alerta.showAndWait();
     }
     @FXML

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="427.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.LoginController">
+<AnchorPane prefHeight="501.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.projecto_final.controllers.LoginController">
    <children>
       <Label layoutX="113.0" layoutY="35.0" text="InmoSmart">
          <font>
@@ -19,7 +19,7 @@
          </font>
       </Label>
       <TextField fx:id="txtIdentification" layoutX="42.0" layoutY="187.0" prefHeight="26.0" prefWidth="281.0" />
-      <Button layoutX="136.0" layoutY="238.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
+      <Button layoutX="133.0" layoutY="238.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Ingresar">
          <font>
             <Font name="Bell MT" size="20.0" />
          </font>
@@ -29,20 +29,25 @@
             <Font name="Bell MT" size="19.0" />
          </font>
       </Label>
-      <Button layoutX="141.0" layoutY="355.0" mnemonicParsing="false" onAction="#onIrARegistroClick" text="Crear Cuenta">
+      <Button layoutX="138.0" layoutY="356.0" mnemonicParsing="false" onAction="#onIrARegistroClick" text="Crear Cuenta">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Button>
-      <Label layoutX="135.0" layoutY="311.0" text="¿No tienes cuenta?">
+      <Label layoutX="132.0" layoutY="311.0" text="¿No tienes cuenta?">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="143.0" layoutY="329.0" text="Registrate Aqui">
+      <Label layoutX="140.0" layoutY="329.0" text="Registrate Aqui">
          <font>
             <Font name="Bell MT" size="13.0" />
          </font>
       </Label>
+      <Button layoutX="131.0" layoutY="421.0" mnemonicParsing="false" onAction="#onVerReportesClick" text="Ver Reportes">
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

@@ -2,12 +2,16 @@ package co.edu.uniquindio.poo.projecto_final.model;
 
 import co.edu.uniquindio.poo.projecto_final.model.enums.Rango;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Usuario {
     private String nombre;
     private String identificacion;
     private String telefono;
     private String correo;
     protected int puntosReputacion;
+    private List<Alerta> listaAlertas;
 
     public Usuario(String nombre, String identificacion,
                    String telefono, String correo) {
@@ -17,9 +21,12 @@ public abstract class Usuario {
         this.telefono = telefono;
         this.correo = correo;
         this.puntosReputacion = 0;
+        this.listaAlertas = new ArrayList<>();
 
     }
-
+    public List<Alerta> getListaAlertas() {
+        return listaAlertas;
+    }
 
     public String getNombre() {
         return nombre;
@@ -82,5 +89,9 @@ public abstract class Usuario {
         if(puntosReputacion>500 && puntosReputacion<=2000){return Rango.EXPERTO_INMOBILIARIO;}
         if(puntosReputacion>2000){return Rango.MAGNATE_INMOBILIARIO;}
         return Rango.PRINCIPIANTE;
+    }
+
+    public void agregarAlerta(Alerta alerta) {
+        this.listaAlertas.add(alerta);
     }
 }
