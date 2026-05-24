@@ -11,4 +11,5 @@ module co.edu.uniquindio.poo.projecto_final {
     exports co.edu.uniquindio.poo.projecto_final.controllers;
     exports co.edu.uniquindio.poo.projecto_final.model;
     exports co.edu.uniquindio.poo.projecto_final.services;
+    opens co.edu.uniquindio.poo.projecto_final.model to org.junit.platform.commons;
 }

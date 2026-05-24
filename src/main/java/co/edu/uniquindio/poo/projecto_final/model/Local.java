@@ -16,6 +16,10 @@ public class Local extends Inmueble{
         super(codigo, direccion, ciudad, area, precio);
         this.numEntradas = numEntradas;
     }
+    public Local(String codigo,String direccion, String ciudad, float area, float precio,int numEntradas){
+        super(codigo, direccion, ciudad, area, precio);
+        this.numEntradas = numEntradas;
+    }
 
     public int getNumEntradas() {
         return numEntradas;
