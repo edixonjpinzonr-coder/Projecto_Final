@@ -32,12 +32,13 @@ public class OfertaDialogController {
         comboTipoOperacion.setItems(FXCollections.<String>observableArrayList("VENTA", "ARRIENDO"));
         lblDetalleInmueble.setText("Inmueble: " + oferta.getInmueble().getCodigo() + " | Precio Base: $" + oferta.getInmueble().getPrecio());
         btnAceptarCambio.setVisible(false);
-        if (rol.equals("VENDEDOR")) {
+
+        if ("VENDEDOR".equalsIgnoreCase(rol)) {
             comboTipoOperacion.setVisible(false);
             lblTitulo.setText("Enviar Contrapropuesta al Comprador");
             lblPrecioAnterior.setText("El Comprador ofreció originalmente: $" + oferta.getValorOferta());
         }
-        else if (rol.equals("COMPRADOR")) {
+        else if ("COMPRADOR".equalsIgnoreCase(rol)) {
             comboTipoOperacion.setVisible(true);
             if (oferta.getEstadoOferta() == EstadoOferta.PENDIENTE) {
                 lblTitulo.setText("Crear Nueva Oferta");

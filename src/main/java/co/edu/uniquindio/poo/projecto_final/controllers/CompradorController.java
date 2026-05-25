@@ -57,48 +57,19 @@ public class CompradorController {
             colBusqCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("ciudad"));
             colBusqArea.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("area"));
             colBusqPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
-
         }
-
         if (colSugCodigo != null) {
             colSugCodigo.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("codigo"));
             colSugCiudad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("ciudad"));
             colSugArea.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("area"));
             colSugPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
-
-        }if (tablaMisOfertas != null) {
+        }
+        if (tablaMisOfertas != null) {
             colOfInmueble.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInmueble().getCodigo()));
             colOfValorOriginal.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("valorOferta"));
             colOfContrapropuesta.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("valorContrapropuesta"));
             colOfEstado.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("estadoOferta"));
         }
-            Usuario usuarioClase = ModelFactoryService.getInstance().getInmoSmart().buscarUsuario("1234");
-            if (usuarioClase instanceof Comprador) {
-                this.compradorLogueado = (Comprador) usuarioClase;
-            }
-
-        cargarInmueblesIniciales();
-        cargarSugerencias();
-        actualizarTablaMisOfertas();
-        actualizarDatosPerfil();
-
-        javafx.application.Platform.runLater(() -> {
-            if (compradorLogueado != null) {
-                if (!compradorLogueado.getListaAlertas().isEmpty()) {
-                    StringBuilder mensajeAcumulado = new StringBuilder("🔔 ¡Tienes una nueva Notificacion! \n\n");
-                    for (Alerta alerta : compradorLogueado.getListaAlertas()) {
-                        mensajeAcumulado.append("• ").append(alerta.getTipoAlerta())
-                                .append("\n  Inmueble: ").append(alerta.getInmuebleAsociado().getCodigo())
-                                .append("\n  Fecha: ").append(alerta.getFecha()).append("\n\n");
-                    }
-                    mostrarMensaje(mensajeAcumulado.toString(), Alert.AlertType.INFORMATION);
-                    compradorLogueado.getListaAlertas().clear();
-                } else {
-                    mostrarMensaje(" BIENVENIDO A INMOSMART \n\n¡Hola, " + compradorLogueado.getNombre() + "! No tienes novedades en tus ofertas por el momento.", Alert.AlertType.INFORMATION);
-                }
-            }
-        });
-
     }
 
     @FXML
@@ -295,10 +266,24 @@ public class CompradorController {
 
     public void setCompradorLogueado(Comprador comprador) {
         this.compradorLogueado = comprador;
-        this.lblBienvenida.setText("Bienvenido, " + comprador.getNombre());
-        cargarInmueblesIniciales();
-        cargarSugerencias();
-        actualizarTablaMisOfertas();
+        if (comprador != null) {
+            this.lblBienvenida.setText("Bienvenido, " + comprador.getNombre());
+            cargarInmueblesIniciales();
+            cargarSugerencias();
+            actualizarTablaMisOfertas();
+            actualizarDatosPerfil();
+
+            if (!comprador.getListaAlertas().isEmpty()) {
+                StringBuilder mensajeAcumulado = new StringBuilder("¡Tienes una nueva Notificación! \n\n");
+                for (Alerta alerta : comprador.getListaAlertas()) {
+                    mensajeAcumulado.append("• ").append(alerta.getTipoAlerta())
+                            .append("\n  Inmueble: ").append(alerta.getInmuebleAsociado().getCodigo())
+                            .append("\n  Fecha: ").append(alerta.getFecha()).append("\n\n");
+                }
+                mostrarMensaje(mensajeAcumulado.toString(), Alert.AlertType.INFORMATION);
+                comprador.getListaAlertas().clear();
+            }
+        }
     }
 }
 

@@ -37,7 +37,7 @@
             <Font name="Bell MT" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="29.0" layoutY="426.0" text="Área Minima">
+      <Label layoutX="29.0" layoutY="426.0" text="Área (m²) Minima">
          <font>
             <Font name="Bell MT" size="15.0" />
          </font>

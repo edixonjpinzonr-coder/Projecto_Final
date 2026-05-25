@@ -68,19 +68,18 @@ public class LoginController {
     }
     public void abrirVentanaVendedor(Vendedor vendedor){
         System.out.println("Redirigiendo al apartado de Vendedor");
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/VendedorView.fxml"));
             Parent root = loader.load();
-
             VendedorController controller = loader.getController();
-            controller.setNombreVendedor(vendedor.getNombre());
+            controller.setVendedorLogueado(vendedor);
 
             Stage stage = (Stage) txtIdentification.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("InmoSmart - Panel de Vendedor");
             stage.show();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             mostrarMensaje("Error al abrir la interfaz de Vendedor: " + e.getMessage(), Alert.AlertType.ERROR);
             e.printStackTrace();
         }
@@ -110,9 +109,8 @@ public class LoginController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/poo/projecto_final/CompradorView.fxml"));
             Parent root = loader.load();
-
             CompradorController controller = loader.getController();
-            controller.setNombreVendedor(comprador.getNombre());
+            controller.setCompradorLogueado(comprador);
 
             Stage stage = (Stage) txtIdentification.getScene().getWindow();
             stage.setScene(new Scene(root));

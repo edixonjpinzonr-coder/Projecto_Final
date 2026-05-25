@@ -84,7 +84,7 @@ public abstract class Usuario {
     public abstract double calcularBeneficio();
 
     public Rango obtenerRango(){
-        if(puntosReputacion>0 && puntosReputacion<=100){return Rango.PRINCIPIANTE;}
+        if(puntosReputacion>=0 && puntosReputacion<=100){return Rango.PRINCIPIANTE;}
         if(puntosReputacion>100 && puntosReputacion<=500){return Rango.INVERSIONISTA;}
         if(puntosReputacion>500 && puntosReputacion<=2000){return Rango.EXPERTO_INMOBILIARIO;}
         if(puntosReputacion>2000){return Rango.MAGNATE_INMOBILIARIO;}

@@ -197,10 +197,9 @@ public class InmoSmart implements IOperacion {
             } else {
                 oferta.getInmueble().setEstado(Estado.VENDIDO);
             }
-            oferta.getComprador().sumarPuntosReputacion("2");
             oferta.getComprador().sumarPuntosReputacion("3");
             if (oferta.getInmueble().getVendedor() != null) {
-                oferta.getInmueble().getVendedor().sumarPuntosReputacion("2");
+                oferta.getInmueble().getVendedor().sumarPuntosReputacion("3");
             }
             Alerta alertaNegocio = new Alerta(TipoAlerta.OFERTA_ACEPTADA, oferta.getInmueble(), this);
             INotificar canal = new NotificacionWhatsApp();

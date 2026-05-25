@@ -7,7 +7,7 @@ import java.util.List;
 
 public class  Vendedor extends Usuario {
 
-    private ArrayList<Inmueble> listaInmuebles;
+    private List<Inmueble> listaInmuebles;
 
     public Vendedor(String nombre, String identificacion,
                     String telefono, String correo) {
@@ -16,11 +16,11 @@ public class  Vendedor extends Usuario {
         this.listaInmuebles= new ArrayList<>();
     }
 
-    public ArrayList<Inmueble> getListaInmuebles() {
+    public List<Inmueble> getListaInmuebles() {
         return listaInmuebles;
     }
 
-    public void setListaInmuebles(ArrayList<Inmueble> listaInmuebles) {
+    public void setListaInmuebles(List<Inmueble> listaInmuebles) {
         this.listaInmuebles = listaInmuebles;
     }
 
@@ -39,7 +39,7 @@ public class  Vendedor extends Usuario {
                 System.out.println(this.puntosReputacion);
                 break;
 
-            case "2"://completar Transaccion
+            case "3"://completar Transaccion
                 this.puntosReputacion += 100;
                 System.out.println(this.puntosReputacion);
                 break;
