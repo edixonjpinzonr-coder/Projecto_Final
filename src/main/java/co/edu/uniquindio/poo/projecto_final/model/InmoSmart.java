@@ -159,19 +159,20 @@ public class InmoSmart implements IOperacion {
         if (oferta == null || oferta.getComprador() == null || oferta.getInmueble() == null) {
             return false;
         }
-
         if (oferta.getValorOferta() <= 0) {
             System.out.println("Error, valor inválido");
             return false;
         }
+        Estado estadoInmueble = oferta.getInmueble().getEstado();
+        if (estadoInmueble == Estado.VENDIDO || estadoInmueble == Estado.RESERVADO) {
+            System.out.println("Error: No se pueden realizar ofertas sobre un inmueble que ya no está disponible.");
+            return false;
+        }
         listaOfertas.add(oferta);
-
         oferta.getComprador().getListaOfertas().add(oferta);
-
         oferta.getComprador().sumarPuntosReputacion("1");
         oferta.getInmueble().getListaOfertas().add(oferta);
-
-        System.out.println("Oferta agregada correctamente para el inmueble " +
+        System.out.println("Oferta agregó correctamente para el inmueble " +
                 oferta.getInmueble().getCodigo());
 
         return true;
@@ -180,6 +181,13 @@ public class InmoSmart implements IOperacion {
     @Override
     public boolean registrarTransaccion(Oferta oferta, TipoOperacion tipoOperacion) {
         boolean bandera = false;
+        if (oferta != null && oferta.getInmueble() != null) {
+            Estado estadoActual = oferta.getInmueble().getEstado();
+            if (estadoActual == Estado.VENDIDO || estadoActual == Estado.RESERVADO) {
+                System.out.println("Error: No se puede registrar la transacción. El inmueble ya no está disponible.");
+                return false;
+            }
+        }
         if (oferta != null && (oferta.getEstadoOferta() == EstadoOferta.PENDIENTE ||
                 oferta.getEstadoOferta() == EstadoOferta.ACEPTADA_POR_COMPRADOR)) {
             oferta.setEstadoOferta(EstadoOferta.ACEPTADA);
